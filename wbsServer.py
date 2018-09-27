@@ -1,6 +1,5 @@
 import asyncio
 import websockets
-import random
 
 ip = "localhost"
 port = 5000
