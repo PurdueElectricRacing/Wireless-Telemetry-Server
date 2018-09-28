@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PER WebSocket Demo</title>
+
+        <div id='data_tx'>
+            <input id='tx_message'>
+            <button id='send'>Send</button>
+            <button id='disconnect'>Disconnect</button>
+        </div>
+        <div id='connection_pannel'>
+            <input id='ws_address'>
+            <button id='connect'>Connect</button>
+        </div>
+
+        <p id='rx_messages'></p>
+        
+
+    </head>
+    <body>
+        <script>
+
+            
+            let connection_panel = document.getElementById('connection_pannel')
+            let address = document.getElementById('ws_address');
+            let connect = document.getElementById('connect');
+
+            let data_tx_panel = document.getElementById('data_tx')
+            let tx_message = document.getElementById('tx_message');
+            let btn_send = document.getElementById('send');
+            let disconnect = document.getElementById('disconnect');
+            let rx_message = document.getElementById('rx_messages');
+            
+            address.value = 'ws://127.0.0.1:5000'
+            var ws;
+
+            hideAll(data_tx)
+
+            connect.onclick = function(ev) {
+                ws = new WebSocket(address.value);
+
+                // When we conenct to the Socket, tell the car that we are here
+                ws.onopen = function () {
+                    ws .send('Ping'); // Send the message 'Ping' to the server
+                    showAll(data_tx_panel)
+                    hideAll(connection_panel)
+                };
+
+                ws.onclose = function() {
+                    rx_message.innerHTML = (new Date().toTimeString().split("(")[0] + " - Server Closed <br>" + rx_message.innerHTML)
+                    showAll(connection_panel)
+                    hideAll(data_tx_panel)
+                }
+
+                ws.onerror = function (error) {
+                    console.error('WebSocket Error ' + error);
+                    ws = null;
+                };
+
+                ws.onmessage = function (e) {
+                    rx_message.innerHTML = (new Date().toTimeString().split("(")[0] + " - " + e.data + "<br>" + rx_message.innerHTML).substring(0, 2000)
+                };
+            }
+            
+
+            // Broadcast tx_message to the car
+            btn_send.onclick = function(ev) {
+                if(ws){
+                    ws.send(tx_message.value)
+                    tx_message.value = ''
+                }
+            }
+
+            disconnect.onclick = function(e){
+                ws.close()
+                rx_message.innerHTML = new Date().toTimeString().split("(")[0] + " - Client Closed <br>" + rx_message.innerHTML
+                showAll(connection_panel)
+                hideAll(data_tx_panel)
+            }
+
+
+
+
+
+
+            function hideAll(elm) {
+                var children = elm.children;
+                for (var i = 0; i < children.length; i++) {
+                    var elm = children[i];
+                    elm.style.display='none'
+                }   
+            }
+            function showAll(elm) {
+                var children = elm.children;
+                for (var i = 0; i < children.length; i++) {
+                    var elm = children[i];
+                    elm.style.display='inline'
+                } 
+            }
+            
+        </script>
+    </body>
+</html>
