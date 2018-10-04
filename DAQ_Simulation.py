@@ -9,6 +9,7 @@ import random
 ip = '127.0.0.1'
 port = 5000
 
+
 async def send_data():
     while True:
         await asyncio.sleep(1)
@@ -18,6 +19,7 @@ async def send_data():
                 'angle': random.random() * 180
                 }
         await server.send_data(data)
+
 
 async def run_server(ip, port):
     wait_task = asyncio.ensure_future(send_data())

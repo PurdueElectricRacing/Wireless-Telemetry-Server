@@ -11,6 +11,7 @@ USERS = set()
 def get_server(ip, port):
     return websockets.serve(on_client_connect, ip, port)
 
+
 # Main server entry point
 async def on_client_connect(websocket, path):
     connection_addr = (f'{websocket.remote_address[0]}:' +
@@ -32,6 +33,7 @@ async def on_client_connect(websocket, path):
     finally:
         print("Client disconnected.")
 
+
 # Broadcast data to all users connected on the socket
 async def send_data(data):
     global USERS
@@ -41,14 +43,17 @@ async def send_data(data):
 
         await asyncio.wait([user.send(payload) for user in USERS])
 
+
 # This function runs in its own loop to handle recieving any messages
 async def recieve_data_loop(websocket):
     while websocket.open:
         try:
             message = await websocket.recv()
             print(f'Message from client: {message}')
-        except:
+        except Exception:
+            print('Client disconnected!')
             return
+
 
 if __name__ == "__main__":
     ip = '127.0.0.1'
