@@ -22,7 +22,8 @@ async def on_client_connect(websocket, path):
           ' on ' + str(datetime.datetime.now()))
 
     await websocket.send(json.dumps({'type': 'connected', 'payload': 'true',
-                                     'timestamp': str(datetime.datetime.now())}))
+                                     'timestamp': str(datetime.datetime.now())
+                                     }))
     global USERS
     try:
         # Track all connected users to broadcast new data whenever available.
