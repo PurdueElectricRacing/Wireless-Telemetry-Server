@@ -1,6 +1,6 @@
 import asyncio
 import websockets
-import time
+from datetime import datetime
 import datetime
 import json
 
@@ -9,19 +9,20 @@ USERS = set()
 
 
 def get_server(ip, port):
+    print('Serving websocket server on ' + ip + ':' + str(port) + ' ...')
     return websockets.serve(on_client_connect, ip, port)
 
 
 # Main server entry point
 async def on_client_connect(websocket, path):
-    connection_addr = (f'{websocket.remote_address[0]}:' +
-                       f'{websocket.remote_address[1]}')
+    connection_addr = (str(websocket.remote_address[0]) + ' : ' +
+                       str(websocket.remote_address[1]))
 
-    print(f'Connected to client at {connection_addr}' +
-          f' on {datetime.datetime.now()}.')
+    print('Connected to client at ' + connection_addr +
+          ' on ' + str(datetime.datetime.now()))
 
     await websocket.send(json.dumps({'type': 'connected', 'payload': 'true',
-                                     'timestamp': time.time()}))
+                                     'timestamp': str(datetime.datetime.now())}))
     global USERS
     try:
         # Track all connected users to broadcast new data whenever available.
@@ -38,8 +39,7 @@ async def on_client_connect(websocket, path):
 async def send_data(data):
     global USERS
     if USERS:
-        payload = json.dumps({'type': 'data', 'payload': data,
-                              'timestamp': time.time()})
+        payload = json.dumps({'type': 'data', 'payload': data}, default=str)
 
         await asyncio.wait([user.send(payload) for user in USERS])
 
@@ -49,7 +49,7 @@ async def recieve_data_loop(websocket):
     while websocket.open:
         try:
             message = await websocket.recv()
-            print(f'Message from client: {message}')
+            print('Message from client: ' + str(message))
         except Exception:
             print('Client disconnected!')
             return
@@ -59,5 +59,5 @@ if __name__ == "__main__":
     ip = '127.0.0.1'
     port = 5000
     asyncio.get_event_loop().run_until_complete(get_server(ip, port))
-    print(f'Serving websocket server on {ip}:{port} ...')
+    print('Serving websocket server on ' + ip + ':' + str(port))
     asyncio.get_event_loop().run_forever()
