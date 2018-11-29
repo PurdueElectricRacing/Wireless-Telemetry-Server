@@ -13,7 +13,7 @@ import os.path
 # websocket server @ 192.168.4.1:5000 and broadcast
 # every CAN message from the car.
 
-ip = '192.168.4.1'
+ip = '192.168.10.1'
 port = 5000
 
 start_date_time = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
@@ -37,8 +37,8 @@ last_time = start_time
 multi_frame_message = ''
 
 
-# Logs a set of CAN frames in a time interval to a log file
-async def log_CAN_data(timestamp, can_id, length, message):
+# # Logs a set of CAN frames in a time interval to a log file
+def log_CAN_data(timestamp, can_id, length, message):
     current_time = int(round(time.time() * 1000))
 
     # Wait for serial connection to stabalize, avoid garbage data
@@ -67,6 +67,12 @@ async def write_serial_data(serial_connection):
 
 # Read serial data from the CANdapter
 async def rec_serial_data(serial_connection):
+    current_time = time.time()
+    last_time = current_time
+    # buffer_time = 1/500
+    buffer_time = 0
+
+    buffer = {}
     while True:
         # Message EOF is a \r character
         message_raw = await serial_connection.readuntil(b'\r')
@@ -85,7 +91,7 @@ async def rec_serial_data(serial_connection):
         m_message = message[4:-4]
         m_timestamp = str(datetime.now())
 
-        await log_CAN_data(m_timestamp, m_id, m_len, m_message)
+        log_CAN_data(m_timestamp, m_id, m_len, m_message)
 
         data = {
             "id": m_id,
@@ -94,8 +100,15 @@ async def rec_serial_data(serial_connection):
             "timestamp": m_timestamp
             }
 
-        await server.send_data(data)
+        buffer[m_id] = data
 
+        current_time = time.time()
+        if current_time - last_time >= buffer_time:
+            buffer_len = len(buffer)
+            if buffer_len > 0:
+                last_time = current_time
+                await server.send_data(buffer)
+                buffer = {}
 
 async def main(loop):
     serial_reader, serial_writer = await serial_asyncio.open_serial_connection(

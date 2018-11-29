@@ -40,7 +40,9 @@ async def on_client_connect(websocket, path):
 async def send_data(data):
     global USERS
     if USERS:
-        payload = json.dumps({'type': 'data', 'payload': data}, default=str)
+        payload = json.dumps({'type': 'data', 'payload': data,
+                              'timestamp': str(datetime.datetime.now()},
+                              default=str))
 
         await asyncio.wait([user.send(payload) for user in USERS])
 
@@ -60,5 +62,4 @@ if __name__ == "__main__":
     ip = '127.0.0.1'
     port = 5000
     asyncio.get_event_loop().run_until_complete(get_server(ip, port))
-    print('Serving websocket server on ' + ip + ':' + str(port))
     asyncio.get_event_loop().run_forever()
