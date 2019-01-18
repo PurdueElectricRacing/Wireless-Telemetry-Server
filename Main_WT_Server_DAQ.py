@@ -12,7 +12,6 @@ import os.path
 # Using different threads, this file will setup a
 # websocket server @ 192.168.4.1:5000 and broadcast
 # every CAN message from the car.
-
 ip = '192.168.10.1'
 port = 5000
 
@@ -109,6 +108,7 @@ async def rec_serial_data(serial_connection):
                 last_time = current_time
                 await server.send_data(buffer)
                 buffer = {}
+
 
 async def main(loop):
     serial_reader, serial_writer = await serial_asyncio.open_serial_connection(
