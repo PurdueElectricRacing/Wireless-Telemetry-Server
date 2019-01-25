@@ -12,15 +12,10 @@
             <input id='ws_address'>
             <button id='connect'>Connect</button>
         </div>
-
         <p id='rx_messages'></p>
-        
-
     </head>
     <body>
         <script>
-
-            
             let connection_panel = document.getElementById('connection_pannel')
             let address = document.getElementById('ws_address');
             let connect = document.getElementById('connect');
@@ -30,7 +25,7 @@
             let btn_send = document.getElementById('send');
             let disconnect = document.getElementById('disconnect');
             let rx_message = document.getElementById('rx_messages');
-            
+
             address.value = 'ws://127.0.0.1:5000'
             var ws;
 
@@ -62,7 +57,6 @@
                 };
             }
             
-
             // Broadcast tx_message to the car
             btn_send.onclick = function(ev) {
                 if(ws){
