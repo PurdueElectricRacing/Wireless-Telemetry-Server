@@ -14,9 +14,9 @@ async def send_data():
     while True:
         await asyncio.sleep(1)
         data = {
-                'accel': random.random() * 10,
-                'gyro': random.random() * 360,
-                'angle': random.random() * 180
+                "accel": random.random() * 10,
+                "gyro": random.random() * 360,
+                "angle": random.random() * 180
                 }
         await server.send_data(data)
 
