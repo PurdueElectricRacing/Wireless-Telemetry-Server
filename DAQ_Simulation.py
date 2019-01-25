@@ -51,7 +51,6 @@ async def send_data():
 
 
 async def run_server(ip, port):
-    print('Hello?')
     wait_task = asyncio.ensure_future(send_data())
     server_task = asyncio.ensure_future(server.get_server('127.0.0.1', 5000))
 

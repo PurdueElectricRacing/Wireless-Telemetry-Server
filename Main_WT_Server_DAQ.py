@@ -12,6 +12,8 @@ import os.path
 # Using different threads, this file will setup a
 # websocket server @ 192.168.4.1:5000 and broadcast.
 # every CAN message from the car.
+# Information is available on the wiki page here:
+# http://purdueelectricracing.com/wiki/index.php/Wireless_Telemetry
 ip = '192.168.10.1'
 port = 5000
 
@@ -36,7 +38,7 @@ last_time = start_time
 multi_frame_message = ''
 
 
-# # Logs a set of CAN frames in a time interval to a log file
+# Logs a set of CAN frames in a time interval to a log file
 def log_CAN_data(timestamp, can_id, length, message):
     current_time = int(round(time.time() * 1000))
 
