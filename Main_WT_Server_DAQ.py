@@ -10,7 +10,7 @@ import os.path
 # This will run on startup on the RPI.
 
 # Using different threads, this file will setup a
-# websocket server @ 192.168.4.1:5000 and broadcast
+# websocket server @ 192.168.4.1:5000 and broadcast.
 # every CAN message from the car.
 ip = '192.168.10.1'
 port = 5000
