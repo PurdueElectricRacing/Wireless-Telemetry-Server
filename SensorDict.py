@@ -5,12 +5,15 @@ import csv
 # and data offset used to parse the specific sensor's data
 
 sensor_file = csv.DictReader(open('SensorDict.csv'))
-sensor_data = csv.DictWriter(open('SensorData.csv', "a"), fieldnames = ["timestamp", "id", "data"], extrasaction = "ignore")
+sensor_data = csv.DictWriter(open('SensorData.csv', "a"), fieldnames=[
+                             "timestamp", "id", "data"], extrasaction="ignore")
 # sensor_data will APPEND to SensorData.csv with fields timestamp,id,data
 
 # Takes in a dictionary file with the format for all of the sensor data and a dictionary of data:
 # {"timestamp" : "XXX", "id" : "XXX", "data" : "XXX"}
-# Returns a dictionary with the data split up with corresponding names
+# Returns a dictionary with the data split up with corresponding names.
+
+
 def data_to_dict(dict_file, data):
     id = "0x" + data["id"]
     message = data["data"]
@@ -19,19 +22,24 @@ def data_to_dict(dict_file, data):
     for row in dict_file:
         if (row["id"] != id):
             continue
-        lsb = int(row["LSB"]) # Least significant byte
-        msb = int(row["MSB"]) + 1 # Most significant byte + 1
-        name = row["name"] # Each entry with a matching ID has a name that goes in the returned dictionary
-        output_dict[name] = message[lsb:msb][::-1] # Collects from lsb to msb and then reverses it
+        lsb = int(row["LSB"])  # Least significant byte
+        msb = int(row["MSB"]) + 1  # Most significant byte + 1
+        # Each entry with a matching ID has a name that goes in the returned dictionary
+        name = row["name"]
+        # Collects from lsb to msb and then reverses it
+        output_dict[name] = message[lsb:msb][::-1]
         output_dict["timestamp"] = timestamp
     return output_dict
 
 # Takes in a list of dictionaries in the format:
 # {"timestamp" : "XXX", "id" : "XXX", "data" : "XXX"}
 # And saves each one in SensorData.csv (defined as sensor_data)
+
+
 def data_to_csv(input_list):
     for dictionary in input_list:
         sensor_data.writerow(dictionary)
+
 
 # When run as main, output current sensor CSV data to a format
 # for pasting into the Wiki
