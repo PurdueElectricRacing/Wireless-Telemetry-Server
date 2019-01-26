@@ -6,10 +6,27 @@ import csv
 
 sensor_file = csv.DictReader(open('SensorDict.csv'))
 
-for row in sensor_file:
-    if row:
-        row['id'] = int(row['id'].strip(), 16)
-        row['start_byte'] = int(row['start_byte'].strip())
-        row['end_byte'] = int(row['end_byte'].strip())
-        row['name'] = row['name'].strip()
-        print(row['comment'])
+
+# When run as main, output current sensor CSV data to a format
+# for pasting into the Wiki
+if __name__ == '__main__':
+    print("{| class=\"wikitable\"")
+    print("|-")
+    print("!ID")
+    print("!Name")
+    print("![MSB:LSB]")
+    print("!Comments")
+    print("|-")
+    for row in sensor_file:
+        if row:
+            row['id'] = (row['id'].strip())
+            row['LSB'] = int(row['LSB'].strip())
+            row['MSB'] = int(row['MSB'].strip())
+            row['name'] = row['name'].strip()
+
+            print("|", row['id'])
+            print("|", row['name'])
+            print("|[" + str(row['MSB']) + ":" + str(row['LSB'])+"]")
+            print("|", row['comments'])
+            print("|-")
+    print("|}")
