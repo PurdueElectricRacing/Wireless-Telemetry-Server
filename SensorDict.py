@@ -27,7 +27,8 @@ def data_to_dict(dict_file, data):
         # Least significant byte
         msb = int(row["MSB"]) + 1
         # Most significant byte + 1
-        # Each entry with a matching ID has a name that goes in the returned dictionary
+        # Each entry with a matching ID has a name that goes
+        # in the returned dictionary
         name = row["name"]
         # Collects from lsb to msb and then reverses it
         output_dict[name] = message[lsb:msb][::-1]
