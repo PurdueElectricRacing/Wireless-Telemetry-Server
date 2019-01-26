@@ -1,10 +1,12 @@
-import sensor_file from SensorDict
+from SensorDict import sensor_file
+import sys
 
 
 # When run as main, output current sensor CSV data to a format
 # for pasting into the Wiki
 if __name__ == '__main__':
     if len(sys.argv) >= 2:
+
         if sys.argv[1] == 'sheets':
             formattedIDs = {}
             for row in sensor_file:
@@ -12,12 +14,20 @@ if __name__ == '__main__':
                 lsb = int(row['LSB'])
                 msb = int(row['MSB'])
                 if row:
-                    cell = (',' + row['name']) * (msb - lsb + 1)
+                    cell = ''
+                    numBytes = msb - lsb + 1
+                    for byte in range(numBytes):
+                        startBit = (numBytes - byte) * 8 - 1
+                        endBit = (numBytes - byte - 1) * 8
+                        cell += ',' + row['name'] + \
+                            " (" + str(startBit) + ":" + str(endBit) + ")"
+
                     if canID not in formattedIDs:
                         formattedIDs[canID] = row['id'] + ', '
                     formattedIDs[canID] += cell
             for line in formattedIDs:
                 print(formattedIDs[line])
+
         elif sys.argv[1] == 'wiki':
             print("{| class=\"wikitable\"")
             print("|-")

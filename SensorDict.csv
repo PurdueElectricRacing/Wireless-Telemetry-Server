@@ -1,66 +1,66 @@
 id,LSB,MSB,name,comments
 
-0xA00, 0, 1, FL Wheel Speed,RPM (0-255)
-0xA00, 2, 3, FR Wheel Speed,
-0xA00, 4, 5, RL Wheel Speed,
-0xA00, 6, 7, RR Wheel Speed,
+0x700, 0, 1, FL Wheel Speed,RPM (0-255)
+0x700, 2, 3, FR Wheel Speed,
+0x700, 4, 5, RL Wheel Speed,
+0x700, 6, 7, RR Wheel Speed,
 
-0xA10, 0, 7, FL Tire Temp,degC (0-255)
-0xA10, 8, 16, FR Tire Temp,
+0x710, 0, 3, FL Tire Temp,degC (0-255)
+0x710, 4, 7, FR Tire Temp,
 
-0xA10, 0, 7, RL Tire Temp,
-0xA10, 8, 15, RR Tire Temp,
+0x711, 0, 3, RL Tire Temp,
+0x711, 4, 7, RR Tire Temp,
 
-0xA20, 0, 1, Coolant Temp (from Rad),degC (0-255)
-0xA20, 2, 3, Coolant Temp (from Motor),
-0xA20, 4, 5, Coolant Temp (from MC),
-0xA20, 6, 7, Coolant Flow,CPM (0-255)
+0x720, 0, 1, Coolant Temp (from Rad),degC (0-255)
+0x720, 2, 3, Coolant Temp (from Motor),
+0x720, 4, 5, Coolant Temp (from MC),
+0x720, 6, 7, Coolant Flow,CPM (0-255)
 
-0xA30, 0, 1, FL Shock Pot,Percentage(0-255)
-0xA30, 2, 3, FR Shock Pot,
-0xA30, 4, 5, RL Shock Pot,
-0xA30, 6, 7, RR Shock Pot,
+0x730, 0, 1, FL Shock Pot,Percentage(0-255)
+0x730, 2, 3, FR Shock Pot,
+0x730, 4, 5, RL Shock Pot,
+0x730, 6, 7, RR Shock Pot,
 
-0xA40, 0, 1, ARBDropLink_Left,
-0xA40, 2, 3, ARBDropLink_Right,
-0xA40, 4, 5, FL ARB Droplink,
-0xA40, 6, 7, FR ARB Droplink,
+0x740, 0, 1, ARBDropLink_Left,
+0x740, 2, 3, ARBDropLink_Right,
+0x740, 4, 5, FL ARB Droplink,
+0x740, 6, 7, FR ARB Droplink,
 
-0xA50, 0, 1, FL Steer Rod,
-0xA50, 2, 3, FR Steer Rod,
-0xA50, 4, 5, RL Tie Rod,
-0xA50, 6, 7, RR Tie Rod,
+0x750, 0, 1, FL Steer Rod,
+0x750, 2, 3, FR Steer Rod,
+0x750, 4, 5, RL Tie Rod,
+0x750, 6, 7, RR Tie Rod,
 
-0xA60, 0, 1, FL Pushrod,
-0xA60, 2, 3, FR Pushrod,
-0xA60, 4, 5, RL Pushrod,
-0xA60, 6, 7, RR Pushrod,
+0x760, 0, 1, FL Pushrod,
+0x760, 2, 3, FR Pushrod,
+0x760, 4, 5, RL Pushrod,
+0x760, 6, 7, RR Pushrod,
 
-0xA70, 0, 1, Front LCA_Left_Front,
-0xA70, 2, 3, Rear LCA_Left_Front,
-0xA70, 4, 5, Front LCA_Left_Back,
-0xA70, 6, 7, Rear LCA_Left_Back,
+0x770, 0, 1, Front LCA_Left_Front,
+0x770, 2, 3, Rear LCA_Left_Front,
+0x770, 4, 5, Front LCA_Left_Back,
+0x770, 6, 7, Rear LCA_Left_Back,
 
-0xA80, 0, 1, Front LCA_Right_Front,
-0xA80, 2, 3, Rear LCA_Right_Front,
-0xA80, 4, 5, Front LCA_Right_Back,
-0xA80, 6, 7, Rear LCA_Right_Back,
+0x780, 0, 1, Front LCA_Right_Front,
+0x780, 2, 3, Rear LCA_Right_Front,
+0x780, 4, 5, Front LCA_Right_Back,
+0x780, 6, 7, Rear LCA_Right_Back,
 
-0xA90, 0, 1, Front UCA_Left_Front,
-0xA90, 2, 3, Rear UCA_Left_Front,
-0xA90, 4, 5, Front UCA_Left_Back,
-0xA90, 6, 7, Rear UCA_Left_Back,
+0x790, 0, 1, Front UCA_Left_Front,
+0x790, 2, 3, Rear UCA_Left_Front,
+0x790, 4, 5, Front UCA_Left_Back,
+0x790, 6, 7, Rear UCA_Left_Back,
 
-0xAA0, 0, 1, Front UCA_Right_Front,
-0xAA0, 2, 3, Rear UCA_Right_Front,
-0xAA0, 4, 5, Front UCA_Right_Back,
-0xAA0, 6, 7, Rear UCA_Right_Back,
+0x7A0, 0, 1, Front UCA_Right_Front,
+0x7A0, 2, 3, Rear UCA_Right_Front,
+0x7A0, 4, 5, Front UCA_Right_Back,
+0x7A0, 6, 7, Rear UCA_Right_Back,
 
-0xAB0, 0, 1, Front ARB_Torsional,
-0xAB0, 2, 3, Rear ARB_Torsional,
+0x7B0, 0, 1, Front ARB_Torsional,
+0x7B0, 2, 3, Rear ARB_Torsional,
 
-0xAC0, 0, 7, Steering Shaft Torsional,
+0x7C0, 0, 7, Steering Shaft Torsional,
 
-0xAD0, 0, 7, IMU,
+0x7D0, 0, 7, IMU,
 
-0xAE0, 0, 7, Steering Angle,
+0x7E0, 0, 7, Steering Angle,
