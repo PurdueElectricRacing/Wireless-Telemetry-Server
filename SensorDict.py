@@ -9,7 +9,8 @@ sensor_data = csv.DictWriter(open('SensorData.csv', "a"), fieldnames=[
                              "timestamp", "id", "data"], extrasaction="ignore")
 # sensor_data will APPEND to SensorData.csv with fields timestamp,id,data
 
-# Takes in a dictionary file with the format for all of the sensor data and a dictionary of data:
+# Takes in a dictionary file with the format for all of the sensor data.
+# Also takes in a dictionary of data with format:
 # {"timestamp" : "XXX", "id" : "XXX", "data" : "XXX"}
 # Returns a dictionary with the data split up with corresponding names.
 
@@ -22,8 +23,10 @@ def data_to_dict(dict_file, data):
     for row in dict_file:
         if (row["id"] != id):
             continue
-        lsb = int(row["LSB"])  # Least significant byte
-        msb = int(row["MSB"]) + 1  # Most significant byte + 1
+        lsb = int(row["LSB"])
+        # Least significant byte
+        msb = int(row["MSB"]) + 1
+        # Most significant byte + 1
         # Each entry with a matching ID has a name that goes in the returned dictionary
         name = row["name"]
         # Collects from lsb to msb and then reverses it
