@@ -1,0 +1,50 @@
+id,name
+0x000,FL Wheel Speed
+0x000,FR Wheel Speed
+0x000,RL Wheel Speed
+0x000,RR Wheel Speed
+0x000,FL Tire Temp
+0x000,FR Tire Temp
+0x000,RL Tire Temp
+0x000,RR Tire Temp
+0x000,Coolant Temp (from Rad)
+0x000,Coolant Temp (from Motor)
+0x000,Coolant Temp (from MC)
+0x000,Coolant Flow
+0x000,FL Shock Pot
+0x000,FR Shock Pot
+0x000,RL Shock Pot
+0x000,RR Shock Pot
+0x000,ARBDropLink_Left
+0x000,ARBDropLink_Right
+0x000,FL Steer Rod
+0x000,FR Steer Rod
+0x000,RL Tie Rod
+0x000,RR Tie Rod
+0x000,FL ARB Droplink
+0x000,FR ARB Droplink
+0x000,FL Pushrod
+0x000,FR Pushrod
+0x000,RL Pushrod
+0x000,RR Pushrod
+0x000,Front LCA_Left_Front
+0x000,Rear LCA_Left_Front
+0x000,Front LCA_Left_Back
+0x000,Rear LCA_Left_Back
+0x000,Front LCA_Right_Front
+0x000,Rear LCA_Right_Front
+0x000,Front LCA_Right_Back
+0x000,Rear LCA_Right_Back
+0x000,Front UCA_Left_Front
+0x000,Rear UCA_Left_Front
+0x000,Front UCA_Left_Back
+0x000,Rear UCA_Left_Back
+0x000,Front UCA_Right_Front
+0x000,Rear UCA_Right_Front
+0x000,Front UCA_Right_Back
+0x000,Rear UCA_Right_Back
+0x000,Front ARB_Torsional
+0x000,Rear ARB_Torsional
+0x000,Steering Shaft Torsional
+0x000,IMU
+0x000,Steering Angle
