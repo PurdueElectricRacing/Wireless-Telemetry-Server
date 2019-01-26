@@ -61,6 +61,8 @@ id,LSB,MSB,name,comments
 
 0x7C0, 0, 7, Steering Shaft Torsional,
 
-0x7D0, 0, 7, IMU,
+0x7D0, 0, 0, IMU Data Type, 
+0x7D0, 1, 2, IMU Data, 
+0x7D0, 3, 5, IMU Data Time,
 
 0x7E0, 0, 7, Steering Angle,
