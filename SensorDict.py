@@ -1,70 +1,81 @@
 import csv
 
+
 # Import sensor data from CSF file. This file contains information
 # about each individual sensor on the car as well as its can ID
 # and data offset used to parse the specific sensor's data
+class CANParser():
+    def __init__(self):
+        self.sensorLib = self.create_lib()
 
-sensor_file = csv.DictReader(open('SensorDict.csv'))
-sensor_data = csv.DictWriter(open('SensorData.csv', "a"), fieldnames=[
-                             "timestamp", "id", "data"], extrasaction="ignore")
-# sensor_data will APPEND to SensorData.csv with fields timestamp,id,data
+        self.saveFile = csv.DictWriter(open('SensorData.csv', "a"),
+                                       fieldnames=["timestamp", "id", "data"],
+                                       extrasaction="ignore")
 
-# Takes in a dictionary file with the format for all of the sensor data.
-# Also takes in a dictionary of data with format:
-# {"timestamp" : "XXX", "id" : "XXX", "data" : "XXX"}
-# Returns a dictionary with the data split up with corresponding names.
+    # Parses CSV file of individual sensors to a dict that is easily
+    # navigitable for parsing incoming data.
+    # list format:
+    # id : {'name1' : [msb, lsb], 'name2' : [msb, lsb], ...}
+    def create_lib(self):
+        sensorLibraryFile = csv.reader(open('SensorDict.csv'))
+        sensorIdList = {}
 
+        for row in sensorLibraryFile:
+            if not row or row[0] == 'id':
+                continue
 
-def data_to_dict(dict_file, data):
-    id = "0x" + data["id"]
-    message = data["data"]
-    timestamp = data["timestamp"]
-    output_dict = {}
-    for row in dict_file:
-        if (row["id"] != id):
-            continue
-        lsb = int(row["LSB"])
-        # Least significant byte
-        msb = int(row["MSB"]) + 1
-        # Most significant byte + 1
-        # Each entry with a matching ID has a name that goes
-        # in the returned dictionary
-        name = row["name"]
-        # Collects from lsb to msb and then reverses it
-        output_dict[name] = message[lsb:msb][::-1]
-        output_dict["timestamp"] = timestamp
-    return output_dict
+            canID = int(row[0], 16)
+            msb = int(row[1])
+            lsb = int(row[2])
+            friendlyName = row[3].strip()
 
-# Takes in a list of dictionaries in the format:
-# {"timestamp" : "XXX", "id" : "XXX", "data" : "XXX"}
-# And saves each one in SensorData.csv (defined as sensor_data)
+            if canID not in sensorIdList:
+                sensorIdList[canID] = {}
+            sensorIdList[canID][friendlyName] = [msb, lsb]
 
+        return sensorIdList
 
-def data_to_csv(input_list):
-    for dictionary in input_list:
-        sensor_data.writerow(dictionary)
+    # Takes in a single data point with the format:
+    # {"timestamp" : "XXX", "id" : "XXX", "data" : "XXXX"}
+    # This is how the websocket sends single data points
+    # Returns a dictionary with the data split up with corresponding names
+    # and split up datapoints.
+    def parse_single_data(self, dataLine, convert=False):
+        messageID = int(dataLine["id"], 16)
+        message = dataLine["data"]
+        timestamp = dataLine["timestamp"]
 
+        output_dict = {}
 
-# When run as main, output current sensor CSV data to a format
-# for pasting into the Wiki
-if __name__ == '__main__':
-    print("{| class=\"wikitable\"")
-    print("|-")
-    print("!ID")
-    print("!Name")
-    print("![MSB:LSB]")
-    print("!Comments")
-    print("|-")
-    for row in sensor_file:
-        if row:
-            row['id'] = (row['id'].strip())
-            row['LSB'] = int(row['LSB'].strip())
-            row['MSB'] = int(row['MSB'].strip())
-            row['name'] = row['name'].strip()
+        libFormat = self.sensorLib[messageID]
 
-            print("|", row['id'])
-            print("|", row['name'])
-            print("|[" + str(row['MSB']) + ":" + str(row['LSB'])+"]")
-            print("|", row['comments'])
-            print("|-")
-    print("|}")
+        for sensorName in libFormat:
+            indicies = libFormat[sensorName]
+            msb = indicies[0]
+            lsb = indicies[1] + 1
+            dataValue = message[msb:lsb]
+            if convert:
+                dataValue = int(dataValue, 16)
+            output_dict[sensorName] = dataValue
+
+        output_dict['timestamp'] = dataLine['timestamp']
+        return output_dict
+
+    # Takes in a list of dictionaries in the format:
+    # {"timestamp" : "XXX", "id" : "XXX", "data" : "XXX"}
+    # And saves each one in SensorData.csv (defined as sensor_data)
+    # APPEND to SensorData.csv with fields timestamp,id,data
+    def save_data_to_csv(input_list):
+        for dictionary in input_list:
+            self.saveFile.writerow(dictionary)
+
+# Sample use code of parsing class
+if __name__ == "__main__":
+    sampleParser = CANParser()
+    sampleWSData = [
+        {"id": "760", "data": "FFCDEFAB", "timestamp": "2019-01-29 21:13"},
+        {"id": "7A0", "data": "FFCDCCAA", "timestamp": "2019-01-29 21:13"},
+        {"id": "711", "data": "ABCF", "timestamp": "2019-01-29 21:13"}
+        ]
+    for dataPoint in sampleWSData:
+        print(sampleParser.parse_single_data(dataPoint, convert=True))

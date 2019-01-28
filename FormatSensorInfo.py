@@ -11,11 +11,11 @@ if __name__ == '__main__':
             formattedIDs = {}
             for row in sensor_file:
                 canID = int(row['id'], 16)
-                lsb = int(row['LSB'])
                 msb = int(row['MSB'])
+                lsb = int(row['LSB'])
                 if row:
                     cell = ''
-                    numBytes = msb - lsb + 1
+                    numBytes = lsb - msb + 1
                     for byte in range(numBytes):
                         startBit = (numBytes - byte) * 8 - 1
                         endBit = (numBytes - byte - 1) * 8
