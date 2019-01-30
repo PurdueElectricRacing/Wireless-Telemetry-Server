@@ -10,7 +10,7 @@ import os.path
 # This will run on startup on the RPI.
 
 # Using different threads, this file will setup a
-# websocket server @ 192.168.4.1:5000 and broadcast.
+# websocket server @ 192.168.10.1:5000 and broadcast
 # every CAN message from the car.
 # Information is available on the wiki page here:
 # http://purdueelectricracing.com/wiki/index.php/Wireless_Telemetry
@@ -42,7 +42,7 @@ multi_frame_message = ''
 def log_CAN_data(timestamp, can_id, length, message):
     current_time = int(round(time.time() * 1000))
 
-    # Wait for serial connection to stabalize, avoid garbage data
+    # Wait for serial connection to stabilize, avoid garbage data
     if current_time - start_time < 1500:
         return
 
