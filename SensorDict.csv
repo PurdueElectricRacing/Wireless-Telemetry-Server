@@ -1,0 +1,70 @@
+id,MSB,LSB,name,comments
+
+0x700, 0, 1, FL Wheel Speed,RPM (0-255)
+0x700, 2, 3, FR Wheel Speed,
+
+0x701, 0, 1, RL Wheel Speed,
+0x701, 2, 3, RR Wheel Speed,
+
+0x710, 0, 1, FL Tire Temp,degC (0-255)
+0x710, 2, 3, FR Tire Temp,
+
+0x711, 0, 1, RL Tire Temp,
+0x711, 2, 3, RR Tire Temp,
+
+0x720, 0, 1, Coolant Temp (from Rad),degC (0-255)
+0x720, 2, 3, Coolant Temp (from Motor),
+0x720, 4, 5, Coolant Temp (from MC),
+0x720, 6, 7, Coolant Flow,CPM (0-255)
+
+0x730, 0, 1, FL Shock Pot,Percentage(0-255)
+0x730, 2, 3, FR Shock Pot,
+
+0x731, 0, 1, RL Shock Pot,Percentage(0-255)
+0x731, 2, 3, RR Shock Pot,
+
+0x740, 0, 1, ARBDropLink_Left,
+0x740, 2, 3, ARBDropLink_Right,
+0x740, 4, 5, FL ARB Droplink,
+0x740, 6, 7, FR ARB Droplink,
+
+0x750, 0, 1, FL Steer Rod,
+0x750, 2, 3, FR Steer Rod,
+0x750, 4, 5, FL Pushrod,
+0x750, 6, 7, FR Pushrod,
+
+0x760, 0, 1, RL Tie Rod,
+0x760, 2, 3, RR Tie Rod,
+0x760, 4, 5, RL Pushrod,
+0x760, 6, 7, RR Pushrod,
+
+0x770, 0, 1, Front LCA_Left_Front,
+0x770, 2, 3, Rear LCA_Left_Front,
+0x770, 4, 5, Front LCA_Right_Front,
+0x770, 6, 7, Rear LCA_Right_Front,
+
+0x780, 0, 1, Front LCA_Left_Back,
+0x780, 2, 3, Rear LCA_Left_Back,
+0x780, 4, 5, Front LCA_Right_Back,
+0x780, 6, 7, Rear LCA_Right_Back,
+
+0x790, 0, 1, Front UCA_Left_Front,
+0x790, 2, 3, Rear UCA_Left_Front,
+0x790, 4, 5, Front UCA_Right_Front,
+0x790, 6, 7, Rear UCA_Right_Front,
+
+0x7A0, 0, 1, Front UCA_Left_Back,
+0x7A0, 2, 3, Rear UCA_Left_Back,
+0x7A0, 4, 5, Front UCA_Right_Back,
+0x7A0, 6, 7, Rear UCA_Right_Back,
+
+0x7B0, 0, 1, Front ARB_Torsional,
+
+0x7B1, 0, 1, Rear ARB_Torsional,
+
+0x7C0, 0, 1, Steering Angle,
+0x7C0, 2, 3, Steering Shaft Torsional,
+
+0x7D0, 0, 0, IMU Data Type, 
+0x7D0, 1, 2, IMU Data, 
+0x7D0, 3, 5, IMU Data Time,
