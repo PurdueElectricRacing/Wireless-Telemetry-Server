@@ -35,6 +35,7 @@ class CANParser():
 
         return sensorIdList
 
+<<<<<<< HEAD
     # Takes in a single data point with the format:
     # {"timestamp" : "XXX", "id" : "XXX", "data" : "XXXX"}
     # This is how the websocket sends single data points
@@ -44,6 +45,27 @@ class CANParser():
         messageID = int(dataLine["id"], 16)
         message = dataLine["data"]
         timestamp = dataLine["timestamp"]
+=======
+def data_to_dict(dict_file, data):
+    id = "0x" + data["id"]
+    message = data["data"]
+    timestamp = data["timestamp"]
+    output_dict = {}
+    for row in dict_file:
+        if (row["id"] != id):
+            continue
+        lsb = int(row["LSB"])
+        # Least significant byte
+        msb = int(row["MSB"]) + 1
+        # Most significant byte + 1
+        # Each entry with a matching ID has a name that goes
+        # in the returned dictionary
+        name = row["name"]
+        # Collects from lsb to msb and then reverses it
+        output_dict[name] = message[lsb:msb][::-1]
+        output_dict["timestamp"] = timestamp
+    return output_dict
+>>>>>>> c7dda623f8e5da17c49c0cec63f7f13c751fabc2
 
         output_dict = {}
 
