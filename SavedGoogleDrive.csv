@@ -2,11 +2,12 @@ id,MSB,LSB,name,comments
 0x500,0,0,Raw Throttle Value 1,
 0x500,1,1,Throttle Value,
 0x500,2,3,Brake Value,
-0x700,0,1,FL Wheel Speed,
+0x700,0,1,FL Wheel Speed,Wheel speed in RPM
 0x700,2,3,FR Wheel Speed,
 0x701,0,1,RL Wheel Speed,
 0x701,2,3,RR Wheel Speed,
-0x710,0,3,FL Tire Temp,
+0x710,0,3,FL Tire Temp,Temperature in deg C
+0x710,4,7,FR Tire Temp,
 0x711,0,3,RL Tire Temp,
 0x711,4,7,RR Tire Temp,
 0x720,0,5,Coolant Temp,

@@ -5,7 +5,8 @@ import pandas as pd
 
 file_id = "195Y2cf9C2mrA6QCLuLJv3NHsCqTLi-3Wd07q4T5rXuM"
 output_file = "SavedGoogleDrive.csv"
-ignore_rows = 7
+# Index of the header row:
+ignore_rows = 5
 
 # This only gets the FIRST SHEET in the document
 # If there is more than one sheet, make sure the first sheet is correct
@@ -20,20 +21,18 @@ savefile = open(output_file, "wb")
 savefile.write(response.content)
 savefile.close()
 
-# Read file as dataframe:
-content_df = pd.read_csv(output_file, sep=",", header=None,
-                         dtype="str",
-                         names=["TRANSMITTING MODULE", "DESCRIPTION", "ID",
-                                "AddMethd", "BYTE0", "BYTE1", "BYTE2", "BYTE3",
-                                "BYTE4", "BYTE5", "BYTE6", "BYTE7",
-                                "Comments"])
+# Read file as dataframe.
+content_df = pd.read_csv(output_file, sep=",", header=ignore_rows, dtype="str")
+
 # Drop unwanted columns:
-content_df = content_df.drop(["TRANSMITTING MODULE", "DESCRIPTION", "AddMethd",
-                             "Comments"], axis="columns")
-# Drop first few rows:
-content_df = content_df.drop(range(0, ignore_rows))
+content_df = content_df.drop(["TRANSMITTING MODULE", "DESCRIPTION / SENSOR",
+                              "AddMethd"], axis="columns")
+
 bytes_list = ["BYTE0", "BYTE1", "BYTE2", "BYTE3",
               "BYTE4", "BYTE5", "BYTE6", "BYTE7"]
+
+# Drop example row:
+content_df = content_df.drop(0)
 content_df = content_df.set_index("ID", drop=False)
 
 # New dataframe for output
@@ -51,7 +50,7 @@ for row in content_df["ID"]:
         # Find location of parenthesis
         paren_start = item.find("(")
         # If there is an opening parenthesis, remove all text after it
-        if(paren_start is not -1):
+        if(paren_start != -1):
             item = item[0:paren_start-1]
         # When two adjacent bytes are the same, increment least sig. byte
         if(item == lastcell):
@@ -60,8 +59,12 @@ for row in content_df["ID"]:
         # Otherwise create new row in the csv with the byte number
         else:
             byte_num = column[4]
+            comment = str(content_df.loc[row, "Comments"])
+            # The first byte of a sensor gets any comments in the spreadsheet
+            comment = None if byte_num != "0" or comment == "nan" else comment
             output_df = output_df.append({"id": row, "MSB": byte_num,
-                                          "LSB": byte_num, "name": item},
+                                          "LSB": byte_num, "name": item,
+                                          "comments": comment},
                                          ignore_index=True)
         lastcell = item
 # Save new output file.
