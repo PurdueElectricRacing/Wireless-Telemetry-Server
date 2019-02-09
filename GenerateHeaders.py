@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Name of the column with "C-friendly" names
-name_column = "comments"
+name_column = "name"
 
 sensors_df = pd.read_csv("SensorDict.csv", sep=",", header=0, dtype="str")
 savefile = open("CANID.h", "w+")
@@ -15,7 +15,7 @@ for row in range(0, len(sensors_df)):
                                        last_underscore]  # i.e. "ACCEL"
     ID = sensors_df.loc[row, "id"]
     if lastID != ID:
-        savefile.write("#define " + sensor_name + "_CAN_ID " + ID + "\n")
+        savefile.write("\n#define " + sensor_name + "_CAN_ID " + ID + "\n")
     savefile.write("#define " + sensor_name_and_type + "_START_BYTE " +
                    sensors_df.loc[row, "MSB"] + "\n")
     savefile.write("#define " + sensor_name_and_type + "_END_BYTE " +
