@@ -10,8 +10,8 @@ ignore_rows = 5
 
 # This only gets the FIRST SHEET in the document
 # If there is more than one sheet, make sure the first sheet is correct
-response = requests.get("https://docs.google.com/spreadsheet/ccc?key="
-                        + file_id + "&output=csv")
+response = requests.get("https://docs.google.com/spreadsheet/ccc?key=" +
+                        file_id + "&output=csv")
 # Check that status code = 200
 response.raise_for_status()
 

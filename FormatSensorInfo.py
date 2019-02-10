@@ -21,7 +21,6 @@ if __name__ == '__main__':
 
                 for sensorName in idEntry:
                     sensorData = idEntry[sensorName]
-                    
                     msb = int(sensorData[0])
                     lsb = int(sensorData[1])
 
