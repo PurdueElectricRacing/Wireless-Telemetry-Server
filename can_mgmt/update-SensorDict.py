@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+import math
 # Maybe you can do this with the csv library
 # But Pandas is way easier to use
 
@@ -36,12 +37,16 @@ content_df = content_df.drop(0)
 content_df = content_df.set_index("ID", drop=False)
 
 # New dataframe for output
-output_df = pd.DataFrame(None, columns=["id", "MSB", "LSB",
-                                        "name", "comments"])
+output_df = pd.DataFrame(None, columns=["id", "MSB", "LSB", "name"])
 
 # Now iterate through each cell
 for row in content_df["ID"]:
     lastcell = None
+
+    if row != row:
+        print("Unable to parse " + str(row))
+        continue
+
     for column in bytes_list:
         item = str(content_df.loc[row, column])
         # Ignore bytes with no assigned name
@@ -59,12 +64,8 @@ for row in content_df["ID"]:
         # Otherwise create new row in the csv with the byte number
         else:
             byte_num = column[4]
-            comment = str(content_df.loc[row, "Comments"])
-            # The first byte of a sensor gets any comments in the spreadsheet
-            comment = None if byte_num != "0" or comment == "nan" else comment
             output_df = output_df.append({"id": row, "MSB": byte_num,
-                                          "LSB": byte_num, "name": item,
-                                          "comments": comment},
+                                          "LSB": byte_num, "name": item},
                                          ignore_index=True)
         lastcell = item
 # Save new output file.

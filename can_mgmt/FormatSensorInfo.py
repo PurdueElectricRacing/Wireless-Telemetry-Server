@@ -9,7 +9,7 @@ if __name__ == '__main__':
     if len(sys.argv) >= 2:
 
         # Output for google sheets with the following output:
-        # Name, ID, , SensorName (ByteN), SensorName (ByteN-1), ... SensorName (Byte0)
+        # Name, ID, , SensorName (ByteN), SensorName (ByteN-1), ...
         if sys.argv[1] == 'sheets':
             outputList = {}
 
