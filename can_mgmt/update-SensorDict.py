@@ -34,39 +34,35 @@ bytes_list = ["BYTE0", "BYTE1", "BYTE2", "BYTE3",
 
 # Drop example row:
 content_df = content_df.drop(0)
-content_df = content_df.set_index("ID", drop=False)
+content_df = content_df.set_index("ID", drop=True)
 
 # New dataframe for output
 output_df = pd.DataFrame(None, columns=["id", "MSB", "LSB", "name"])
 
-# Now iterate through each cell
-for row in content_df["ID"]:
-    lastcell = None
-
-    if row != row:
+for index, row in content_df.iterrows():
+    last_cell = None
+    if row.empty:
         print("Unable to parse " + str(row))
         continue
-
     for column in bytes_list:
-        item = str(content_df.loc[row, column])
-        # Ignore bytes with no assigned name
+        item = str(row[column])
         if(item == "nan"):
             continue
-        # Find location of parenthesis
         paren_start = item.find("(")
         # If there is an opening parenthesis, remove all text after it
         if(paren_start != -1):
             item = item[0:paren_start-1]
         # When two adjacent bytes are the same, increment least sig. byte
-        if(item == lastcell):
+        if(item == last_cell):
             new_lsb = int(output_df.loc[output_df.index[-1], "LSB"]) + 1
             output_df.at[output_df.index[-1], "LSB"] = str(new_lsb)
         # Otherwise create new row in the csv with the byte number
         else:
             byte_num = column[4]
-            output_df = output_df.append({"id": row, "MSB": byte_num,
+            output_df = output_df.append({"id": index, "MSB": byte_num,
                                           "LSB": byte_num, "name": item},
                                          ignore_index=True)
-        lastcell = item
+        last_cell = item
+
 # Save new output file.
 output_df.to_csv(output_file, index=None, header=True)
