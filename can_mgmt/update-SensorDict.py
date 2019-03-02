@@ -10,6 +10,9 @@ OUTPUT_HEADER_FILE = "CANID.h"
 HEADER_ROW = 5
 BYTES_LIST = ["BYTE0", "BYTE1", "BYTE2", "BYTE3",
               "BYTE4", "BYTE5", "BYTE6", "BYTE7"]
+BITS_DICT = {"BYTE0": (7, 0), "BYTE1": (15, 8), "BYTE2": (23, 16),
+             "BYTE3": (31, 24), "BYTE4": (39, 32), "BYTE5": (47, 40),
+             "BYTE6": (55, 48), "BYTE7": (63, 56)}
 
 # This only gets the FIRST SHEET in the document
 # If there is more than one sheet, make sure the first sheet is correct
@@ -38,31 +41,44 @@ content_df = content_df.set_index("ID", drop=True)
 
 # New dataframe for output
 output_df = pd.DataFrame(None, columns=["id", "MSB", "LSB", "name"])
+flags_df = pd.DataFrame(None, columns=["id", "MSB", "LSB", "name"])
 
 for index, row in content_df.iterrows():
     last_cell = None
     for column in BYTES_LIST:
         item = str(row[column])
         # Mediocre check that the names are formatted correctly:
-        if(item.find("_") == -1):
-            break
+        if item.find("\n") != -1:
+            flags_list = item.split("\n")
+            for flag_i, flag in enumerate(flags_list):
+                flag_paren_start = flag.find("(")
+                flag_bit = str(int(flag[flag_paren_start + 1]) +
+                               8 * int(column[4]))
+                flag = flag[0:flag_paren_start - 1]
+                flags_df = flags_df.append({"id": index, "MSB": flag_bit,
+                                           "LSB": flag_bit, "name": flag},
+                                           ignore_index=True)
+            continue
         paren_start = item.find("(")
-        # If there is an opening parenthesis, remove all text after it
-        if(paren_start != -1):
+        if item.find("_") == -1:
+            break
+        # Get the most sig. bit and least sig. bit i.e. (7:0)
+        msb, lsb = BITS_DICT[column]
+        # Remove all text after opening parenthesis
+        if paren_start != -1:
             item = item[0:paren_start-1]
-        # When two adjacent bytes are the same, increment least sig. byte
+        # When two adjacent bytes are the same ID, let lsb = current lsb
         if(item == last_cell):
-            new_lsb = int(output_df.loc[output_df.index[-1], "LSB"]) + 1
-            output_df.at[output_df.index[-1], "LSB"] = str(new_lsb)
-        # Otherwise create new row in the csv with the byte number
+            output_df.at[output_df.index[-1], "MSB"] = str(msb)
+        # Otherwise create new row in the csv with the bit numbers
         else:
-            byte_num = column[4]
-            output_df = output_df.append({"id": index, "MSB": byte_num,
-                                          "LSB": byte_num, "name": item},
+            output_df = output_df.append({"id": index, "MSB": msb,
+                                          "LSB": lsb, "name": item},
                                          ignore_index=True)
         last_cell = item
 
 # Save new output file.
+output_df = output_df.append(flags_df, ignore_index=True)
 output_df.to_csv(OUTPUT_CSV_FILE, index=None, header=True)
 savefile_h = open(OUTPUT_HEADER_FILE, "w+")
 
@@ -83,15 +99,23 @@ savefile_h.write(header)
 last_ID = ""
 for index, row in output_df.iterrows():
     sensor_name_and_type = row["name"]
+    ID = row["id"]
+    # If it does not find underscore, then it will be treated as a flag
+    if sensor_name_and_type.find("FLAG") != -1:
+        if last_ID != ID:
+            savefile_h.write("\n")
+        savefile_h.write("#define {}_BIT {}\n".format(sensor_name_and_type,
+                                                      row["LSB"]))
+        last_ID = ID
+        continue
     last_underscore = sensor_name_and_type.rindex("_")
     sensor_name = sensor_name_and_type[0:last_underscore]
-    ID = row["id"]
     if last_ID != ID:
         savefile_h.write("\n#define {}_CAN_ID {}\n".format(sensor_name, ID))
-    savefile_h.write("#define {}_START_BYTE {}\n".format(sensor_name_and_type,
-                                                         row["MSB"]))
-    savefile_h.write("#define {}_END_BYTE {}\n".format(sensor_name_and_type,
-                                                       row["LSB"]))
+    savefile_h.write("#define {}_START_BIT {}\n".format(sensor_name_and_type,
+                                                        row["LSB"]))
+    savefile_h.write("#define {}_END_BIT {}\n".format(sensor_name_and_type,
+                                                      row["MSB"]))
     last_ID = ID
 
 savefile_h.write("#endif /* CANID_H */")
