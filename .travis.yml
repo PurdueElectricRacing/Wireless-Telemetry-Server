@@ -3,6 +3,7 @@ python:
   - "3.6"
 install:
   - pip install pycodestyle
+  - pip install mypy
 script:
   - pycodestyle .
-  - python tests.py
+  - mypy . --config-file mypy.ini
