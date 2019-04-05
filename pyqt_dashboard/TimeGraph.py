@@ -6,6 +6,18 @@ import numpy as np
 import pandas as pd
 import datetime
 
+
+# TODO create general data module class to handle multiple types of data readout
+class DataModule():
+    def __init__(self):
+        self.title="N/A"
+        pass
+        
+    
+    def addDataPoint(self, *args):
+        raise NotImplementedError('subclasses must override addDataPoint()!')
+
+
 def timestamp():
     return time.time()
 
@@ -18,7 +30,7 @@ class TimeAxisItem(pg.AxisItem):
     def tickStrings(self, values, scale, spacing):
         return [datetime.datetime.fromtimestamp(value).strftime("%H:%M:%S") for value in values]
 
-class TimeGraph():
+class TimeGraph(DataModule):
     def __init__(self, title):
         # self.mainLayout = QtWidgets.QVBoxLayout()
         # self.setLayout(self.mainLayout)
@@ -62,19 +74,24 @@ class TimeGraph():
     def getWidget(self):
         return self.plotItem
 
-class GraphManager():
+class RawReadout(DataModule):
+    def __init__(self, title):
+        self.title=title
+    # TODO implement raw data readout
+
+
+class DataModuleManager():
 
     def __init__(self):
-        self.allGraphs = []
+        self.allModules = []
 
-    def manageGraph(self, newGraph):
-        self.allGraphs.append(newGraph)
+    def manageModule(self, newModule):
+        self.allModules.append(newModule)
 
     # Called whenever new data is to be pushed to 
     # any graph which is being displayed
-    def onDataCallback(self, name, value):
-
+    def onDataCallback(self, *data):
         for g in self.allGraphs:
             if g.title == name:
-                g.addDataPoint(data, timestamp())
+                g.addDataPoint(data)
                 return

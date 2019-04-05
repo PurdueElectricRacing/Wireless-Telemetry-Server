@@ -2,13 +2,13 @@
 
 from PyQt5 import QtWidgets, QtGui
 import pyqtgraph as pg
-from TimeGraph import TimeGraph, GraphManager
+from TimeGraph import TimeGraph, DataModuleManager
 from Layouts import CriticalLayout, DynamicsLayout
 
 
 # Graph manager needs to be able to recieve data
 # from seperate threads to update all graphs
-gm = GraphManager()
+dmm = DataModuleManager()
 
 def main():
     app = QtWidgets.QApplication([])
@@ -24,13 +24,11 @@ def main():
     layout.addWidget(tabs)
     window.setLayout(layout)
 
-    
-
     # Add layouts to window
-    cl = CriticalLayout(graphHandle=gm)
+    cl = CriticalLayout(dmm)
     tabs.addTab(cl,"Critical")
 
-    dl = DynamicsLayout(graphHandle=gm)
+    dl = DynamicsLayout(dmm)
     tabs.addTab(dl,"Dynamics")
 
     # Display window
