@@ -3,20 +3,21 @@
 from PyQt5 import QtWidgets, QtGui
 import pyqtgraph as pg
 from TimeGraph import TimeGraph, DataModuleManager
-from Layouts import CriticalLayout, DynamicsLayout
+from Layouts import *
+from WebsocketProcess import WebsocketProcess
 
 
 # Graph manager needs to be able to recieve data
 # from seperate threads to update all graphs
-dmm = DataModuleManager()
 
 def main():
     app = QtWidgets.QApplication([])
-    
+
+    dmm = DataModuleManager()
     # Initalize main window widget
     window = QtGui.QWidget()
 
-    pg.setConfigOptions(antialias=True)
+    pg.setConfigOptions(antialias=False)
 
     # Initalize main layout and
     tabs = QtWidgets.QTabWidget()
@@ -26,16 +27,24 @@ def main():
 
     # Add layouts to window
     cl = CriticalLayout(dmm)
-    tabs.addTab(cl,"Critical")
+    tabs.addTab(cl, "Critical")
 
     dl = DynamicsLayout(dmm)
-    tabs.addTab(dl,"Dynamics")
+    tabs.addTab(dl, "Dynamics")
+
+    ct = CANTableLayout(dmm)
+    tabs.addTab(ct, "CAN Table")
 
     # Display window
     window.show()
-    window.resize(1600,600) 
+    window.resize(1600, 600)
     window.raise_()
-    app.exec_()    
-    
+
+    wsp = WebsocketProcess(dmm)
+    wsp.start()
+
+    app.exec_()
+
+
 if __name__ == "__main__":
     main()
