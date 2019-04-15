@@ -2,7 +2,7 @@
 
 from PyQt5 import QtWidgets, QtGui
 import pyqtgraph as pg
-from TimeGraph import TimeGraph, DataModuleManager
+from DataReadouts import TimeGraph, DataModuleManager
 from Layouts import *
 from WebsocketProcess import WebsocketProcess
 

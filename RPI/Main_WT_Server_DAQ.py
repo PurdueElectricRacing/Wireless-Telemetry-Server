@@ -1,11 +1,10 @@
 import WirelessTelemServer as server
 import asyncio
-import random
 import serial_asyncio
 import time
 from datetime import datetime
-import logging
 import os.path
+import CAN_Logger
 
 # This will run on startup on the RPI.
 
@@ -22,41 +21,15 @@ start_date_time = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 start_path = os.path.abspath(os.path.dirname(__file__))
 log_path = os.path.join(start_path, 'logs',
                         start_date_time + '.txt')
-# configure logger to not format messages
-logging.basicConfig(level=logging.DEBUG, filename=log_path,
-                    filemode="a+", format='%(message)s')
 
-data_logger = logging.getLogger(__name__)
-logging.getLogger("asyncio").setLevel(logging.WARNING)
-
-data_logger.info(start_date_time)
+with open(log_path, 'a+') as logfile:
+    logfile.write(start_date_time)
 
 # Max resolution (ms) for data frames to be logged
-max_time_diff_ms = 100
+max_time_diff_ms = 100  # Rate of 10Hz
 start_time = int(round(time.time() * 1000))
 last_time = start_time
 multi_frame_message = ''
-
-
-# Logs a set of CAN frames in a time interval to a log file
-def log_CAN_data(timestamp, can_id, length, message):
-    current_time = int(round(time.time() * 1000))
-
-    # Wait for serial connection to stabilize, avoid garbage data
-    if current_time - start_time < 1500:
-        return
-
-    global last_time, multi_frame_message
-
-    delta_time = current_time - last_time
-    single_frame = ',' + can_id + ',' + length + ',' + message
-
-    if(delta_time >= max_time_diff_ms):
-        data_logger.info(multi_frame_message)
-        last_time = current_time
-        multi_frame_message = str(current_time - start_time) + single_frame
-    else:
-        multi_frame_message += single_frame
 
 
 # Used to setup and open CANdapter, only runs once.
@@ -85,23 +58,29 @@ async def rec_serial_data(serial_connection):
         # D = Message data
 
         # Remove trailing \r and leadting t character
-        message = message_raw.replace(b'\r', b'')[1:].decode("utf-8", "ignore")
+        can_message = message_raw.replace(b'\r', b'')[1:].decode("utf-8", "ignore")
 
-        m_id = message[0:3]
-        m_len = message[3:4]
-        m_message = message[4:-4]
-        m_timestamp = str(datetime.now())
+        m_id = can_message[0:3]  
+        stripped_message = can_message[3:]
 
-        log_CAN_data(m_timestamp, m_id, m_len, m_message)
+        num_id = None
+        m_timestamp = int(round(time.time() * 1000))
+
+        CAN_Logger.log_CAN_data(m_id, m_timestamp)
+
+        try:
+            num_id = int(m_id, 16)
+        except Exception:
+            continue
+
+        log_CAN_data(m_id, stripped_message)
 
         data = {
-            "id": m_id,
-            "length": m_len,
-            "message": m_message,
-            "timestamp": m_timestamp
+            "i": m_id,
+            "m": stripped_message,
+            "ts": m_timestamp
             }
-
-        buffer[m_id] = data
+        buffer[int(m_id, 16)] = data
 
         current_time = time.time()
         if current_time - last_time >= buffer_time:

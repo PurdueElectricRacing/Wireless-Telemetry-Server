@@ -5,16 +5,19 @@ import logging
 from datetime import datetime
 import os
 
+
 def mc_parse_A5(can_id, data, time_pi):
-     return {
+
+    return {
         'id': can_id,
         'angle': int(data[:4], 16),
-        'speed': int(data[4:8], 16) ,
+        'speed': int(data[4:8], 16),
         'e_out_freq': int(data[8:10], 16),
         'delta': int(data[10:12], 16),
         'parsed': True,
         'timestamp': time_pi
     }
+
 
 def mc_parse_A8(can_id, data, time_pi):
     return {
@@ -33,7 +36,7 @@ def mc_parse_AC(can_id, data, time_pi):
 
     if fdbk > 65279 * 0.9:
         fdbk -= 65279
-    
+
     return {
         'id': can_id,
         'cmd_torque': int(data[:4], 16),
@@ -42,8 +45,9 @@ def mc_parse_AC(can_id, data, time_pi):
         'timestamp': time_pi
     }
 
+
 def mc_parse_AD(can_id, data, time_pi):
-     return {
+    return {
         'id': can_id,
         'mod_indx': int(data[:4], 16),
         'flx_weak': int(data[4:8], 16),
@@ -52,6 +56,7 @@ def mc_parse_AD(can_id, data, time_pi):
         'parsed': True,
         'timestamp': time_pi
     }
+
 
 def pedalbox2_parse(can_id, data, time_pi):
     return {
@@ -90,7 +95,7 @@ def parse_CAN_frame(can_id, data, time):
         '0AC': mc_parse_AC,
         '0AD': mc_parse_AD,
     }
-    
+
     parse_function = id_parse_functions.get(
         can_id,
         no_parse_function_found)
@@ -99,8 +104,8 @@ def parse_CAN_frame(can_id, data, time):
 
 def parseRawMessage(message, time):
     can_frame_data = parse_CAN_frame(
-        message['id'],
-        message['message'], time)
+        message['i'],
+        message['m'], time)
 
     # if can_frame_data['parsed']:
     return can_frame_data
@@ -115,22 +120,21 @@ class CANWebsocketClient():
 
     def on_message(self, message):
         data = json.loads(message)
-        
+        print(data)
+
         # When running from localhost, messages are sent in strings,
         # not JSON objects. They need to be parsed yet again...
         if self.is_debug and isinstance(data, str):
             data = json.loads(data)
-            if 'type' not in data:
+            if 't' not in data:
                 return
-        if data['type'] == 'data':
-            payload = data['payload']
+
+        if data['t'] == 'd':
+            payload = data['p']
             self.onRecvData(payload)
 
     def onRecvData(self, payload):
-        buffer = []
-        for m_id in payload:
-            buffer.append(payload[m_id])
-        self.callback(buffer)
+        self.callback(payload)
 
     def on_error(ws, error):
         print(error)

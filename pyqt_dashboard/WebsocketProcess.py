@@ -1,7 +1,7 @@
 import time
 from PyQt5.QtCore import QThread
-
 import CANWebsocketClient
+
 
 class WebsocketProcess(QThread):
 
@@ -20,14 +20,14 @@ class WebsocketProcess(QThread):
 
     def appendToBuffer(self, data):
         for message in data:
-            time = float(message['timestamp']) 
+            time = float(message['ts'])
             self.dataManager.onRawDataCallback(message)
             parsed = CANWebsocketClient.parseRawMessage(message, time)
 
             if parsed['parsed']:
                 m_id = parsed['id']
                 self.dataManager.onParsedDataCallback(m_id, parsed)
-    
+
     def run(self):
         if self.isDebug:
             self.client.start("ws://127.0.0.1:5000")
