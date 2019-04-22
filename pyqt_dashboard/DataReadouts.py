@@ -4,9 +4,9 @@ from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QLabel, \
                             QGridLayout, QHeaderView
 from PyQt5.QtCore import QObject, pyqtSignal, Qt, QTimer
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QPainter, QColor, \
-                        QPalette
+                        QPalette, QGraphicsView
 import time
-import CAN_Logger
+from CAN_Logger import *
 
 
 class DataSpec():
@@ -80,20 +80,34 @@ class TimeGraph(DataModule):
         self.plotItem = pg.PlotWidget(title=title, axisItems={'bottom':
                                       TimeAxisItem(orientation='bottom')})
 
-        self.xVals = []
-        self.yVals = []
         self.maxPoints = 100
+        self.updateRate = 1/20
+        self.lastUpdate = time.time()
         self.title = title
 
         self.plotItem.setYRange(*data_range)
 
         self.lines = {}
+        self.plotItem.addLegend()
         for spec in lineSpecs:
-            self.lines[spec] = (self.plotItem.plot([], pen=spec.pen))
+            self.lines[spec] = self.plotItem.plot([],
+                                                  pen=spec.pen,
+                                                  name=spec.yVal_key,
+                                                  autoDownsample=True)
+
+        self.plotItem.setMouseEnabled(x=False, y=False)
+        self.plotItem.showGrid(x=False, y=True, alpha=0.5)
+
+        self.isPaused = False
+        self.plotItem.scene().sigMouseClicked.connect(self.togglePaused)
+
+    def togglePaused(self):
+        self.isPaused = not self.isPaused
 
     def updateGraph(self):
-        for spec, line in self.lines.items():
-            line.setData(spec.xVals, spec.yVals)
+        if not self.isPaused:
+            for spec, line in self.lines.items():
+                line.setData(spec.xVals, spec.yVals)
 
     def addDataPoint(self, data):
         needsUpdate = False
@@ -104,17 +118,9 @@ class TimeGraph(DataModule):
             spec.addXYPoint((x, y))
             needsUpdate = True
 
-        if needsUpdate:
+        if needsUpdate and self.lastUpdate + self.updateRate < time.time():
+            self.lastUpdate = time.time()
             self.updateGraph()
-
-    def setData(self, newXVals, newYVals):
-        self.xVals = newXVals[-self.maxPoints:]
-        self.yVals = newYVals[-self.maxPoints:]
-
-    def onTimerPulse(self):
-        x = [timestamp()]
-        y = [random.random()]
-        self.addDataPoint(x, y)
 
     def getWidget(self):
         return self.plotItem
@@ -168,7 +174,7 @@ class CANTable(DataModule):
     def addDataPoint(self, raw_data):
         m_id = int(raw_data['i'], 16)
 
-        CAN_Logger.log_CAN_data(m_id, raw_data['m'])
+        log_CAN_data(m_id, raw_data['m'])
 
         if m_id not in self.rawDataCount:
             self.rawDataCount[m_id] = 0
@@ -212,41 +218,52 @@ class CANTable(DataModule):
         return self.table
 
 
-class LightToggle(QLabel):
-
+class LightToggle(QPushButton):
     def __init__(self, text, parent=None):
         QWidget.__init__(self, parent=None)
-
         self.isEnabled = -1
-        self.setEnabled(0)
+
+        self.maxRate = 100/1000
+        self.lastTime = time.time()
+        self.setEnabled(1)
 
     def setEnabled(self, enabled):
         if enabled == self.isEnabled:
             return
-        self.isEnabled = enabled
 
-        if self.isEnabled:
-            self.setText("X")
-        else:
-            self.setText("")
+        if self.lastTime + self.maxRate > time.time():
+            self.lastTime = time.time()
+        
+            self.isEnabled = enabled
+
+            if self.isEnabled:
+                self.setStyleSheet("background-color: green")
+            else:
+                self.setStyleSheet("background-color: red")
 
 
 class LightArray(DataModule):
     def __init__(self, dataSpecs):
         super().__init__(dataSpecs)
+        self.vBox = QVBoxLayout()
         self.grid = QGridLayout()
         self.buttons = {}
 
         for i, spec in enumerate(dataSpecs):
             btn = LightToggle(spec.xVal_key)
-            btn.setEnabled(1)
-            btn.setFixedWidth(100)
             label = QLabel(spec.xVal_key)
+
+            btn.setFixedWidth(50)
+            btn.setFixedHeight(50)
             label.setFixedWidth(60)
-            label.setFixedHeight(60)
+            label.setFixedHeight(50)
+            
             self.grid.addWidget(label, i, 1)
             self.grid.addWidget(btn, i, 2)
             self.buttons[spec] = btn
+
+        self.vBox.addLayout(self.grid)
+        self.vBox.addStretch()
 
     def addDataPoint(self, data):
         for spec, btn in self.buttons.items():
@@ -254,7 +271,7 @@ class LightArray(DataModule):
                 btn.setEnabled(data[spec.yVal_key] > 0)
 
     def getWidget(self):
-        return self.grid
+        return self.vBox
 
 
 class DataModuleManager():

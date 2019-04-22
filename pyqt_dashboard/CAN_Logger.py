@@ -3,22 +3,22 @@ from datetime import datetime
 import time
 import sys
 
-start_date_time = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+# start_date_time = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
-start_path = os.path.abspath(os.path.dirname(__file__))
-log_path = os.path.join(start_path, 'logs',
-                        start_date_time + '.txt')
+# start_path = os.path.abspath(os.path.dirname(__file__))
+# log_path = os.path.join(start_path, 'logs',
+#                         start_date_time + '.txt')
 
-with open(log_path, 'a+') as logfile:
-    logfile.write(start_date_time)
+# with open(log_path, 'a+') as logfile:
+#     logfile.write(start_date_time)
 
-# Max resolution (ms) for data frames to be logged
-max_time_diff_ms = 1000  
-start_time = int(round(time.time() * 1000))
-last_time = start_time
-multi_frame_message = ''
+# # Max resolution (ms) for data frames to be logged
+# max_time_diff_ms = 1000  
+# start_time = int(round(time.time() * 1000))
+# last_time = start_time
+# multi_frame_message = ''
 
-total_size = 0
+# total_size = 0
 
 
 # Logs a set of CAN frames in a time interval to a log file

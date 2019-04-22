@@ -1,15 +1,17 @@
 import time
 from PyQt5.QtCore import QThread
-import CANWebsocketClient
+from PyQt5.QtWidgets import QInputDialog
+
+from CANWebsocketClient import *
 
 
 class WebsocketProcess(QThread):
-
-    def __init__(self, dataManager):
+    def __init__(self, dataManager, ip, isDebug=False):
         QThread.__init__(self)
         self.dataManager = dataManager
-        self.isDebug = False
-        self.client = CANWebsocketClient.CANWebsocketClient(
+        self.isDebug = isDebug
+        self.ip = ip
+        self.client = CANWebsocketClient(
             self.appendToBuffer,
             self.on_close,
             self.isDebug)
@@ -19,21 +21,25 @@ class WebsocketProcess(QThread):
         self.wait()
 
     def appendToBuffer(self, data):
-        for message in data:
+
+        # if not isinstance(data, list):
+        #     data = [data]
+        for m_id in data:
+            message = data[m_id]
             time = float(message['ts'])
+            
             self.dataManager.onRawDataCallback(message)
-            parsed = CANWebsocketClient.parseRawMessage(message, time)
+
+            parsed = self.client.parseRawMessage(message, time)
 
             if parsed['parsed']:
                 m_id = parsed['id']
                 self.dataManager.onParsedDataCallback(m_id, parsed)
 
     def run(self):
-        if self.isDebug:
-            self.client.start("ws://127.0.0.1:5000")
-        else:
-            self.client.start("ws://192.168.4.1:5000")
+        self.client.start(self.ip)
 
     def on_close(self):
         self.connected = False
+        print("Closed!")
         pass

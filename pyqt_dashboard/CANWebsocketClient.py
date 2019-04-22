@@ -4,10 +4,10 @@ import datetime as dt
 import logging
 from datetime import datetime
 import os
+import random
 
 
 def mc_parse_A5(can_id, data, time_pi):
-
     return {
         'id': can_id,
         'angle': int(data[:4], 16),
@@ -34,8 +34,9 @@ def mc_parse_A8(can_id, data, time_pi):
 def mc_parse_AC(can_id, data, time_pi):
     fdbk = int(data[4:8], 16)
 
-    if fdbk > 65279 * 0.9:
-        fdbk -= 65279
+    # Feedback torque is sometimes negative
+    if fdbk > 65535 * 0.9:
+        fdbk -= 65535
 
     return {
         'id': can_id,
@@ -61,10 +62,11 @@ def mc_parse_AD(can_id, data, time_pi):
 def pedalbox2_parse(can_id, data, time_pi):
     return {
         'id': can_id,
-        'throttle_1': int(data[:4], 16),
+        'throttle_1': int(data[:4], 16)* random.random(),
         'throttle_2': int(data[4:8], 16),
-        'brake_1': int(data[8:12], 16),
+        'brake_1': int(data[8:12], 16) * random.random(),
         'brake_2': int(data[12:16], 16),
+        'fancy': int(data[12:16], 16) * random.random(),
         'parsed': True,
         'timestamp': time_pi
     }
@@ -102,15 +104,6 @@ def parse_CAN_frame(can_id, data, time):
     return parse_function(can_id, data, time)
 
 
-def parseRawMessage(message, time):
-    can_frame_data = parse_CAN_frame(
-        message['i'],
-        message['m'], time)
-
-    # if can_frame_data['parsed']:
-    return can_frame_data
-
-
 class CANWebsocketClient():
     def __init__(self, callback, on_close, debug=False):
         self.callback = callback
@@ -120,7 +113,6 @@ class CANWebsocketClient():
 
     def on_message(self, message):
         data = json.loads(message)
-        print(data)
 
         # When running from localhost, messages are sent in strings,
         # not JSON objects. They need to be parsed yet again...
@@ -129,14 +121,22 @@ class CANWebsocketClient():
             if 't' not in data:
                 return
 
+        # If type is data
         if data['t'] == 'd':
             payload = data['p']
             self.onRecvData(payload)
 
+    def sendCANMEssage(self, m_id, message):
+        message_len = str(len(message) / 2)
+        message_fmt = 't' + m_id + message_len + message
+        print("Sending message:", message_fmt)
+
+        # self.ws.send(message)
+
     def onRecvData(self, payload):
         self.callback(payload)
 
-    def on_error(ws, error):
+    def on_error(self, ws, error):
         print(error)
 
     def start(self, address):
@@ -149,3 +149,10 @@ class CANWebsocketClient():
                                          on_error=self.on_error,
                                          on_close=self.on_close)
         self.ws.run_forever()
+
+    def parseRawMessage(self, message, time):
+        can_frame_data = parse_CAN_frame(
+            message['i'],
+            message['m'], time)
+
+        return can_frame_data
