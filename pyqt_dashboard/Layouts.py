@@ -48,6 +48,7 @@ class ReadoutLayout(QWidget):
 
         def sendMessage():
             print(id_field.text())
+            # TODO Send message to server to broadcast on CAN
             pass
 
         send_button.clicked.connect(sendMessage)
@@ -84,10 +85,11 @@ class CriticalLayout(ReadoutLayout):
             ]
         self.placeLightArray(SDC, (1, 1))
 
-        throttleLine = [DataSpec('501', 'timestamp', 'throttle_1')]
+        throttleLine = [
+            DataSpec('501', 'timestamp', 'throttle_1'),
+            DataSpec('501', 'timestamp', 'throttle_2')
+            ]
         self.placeNewGraph("Throttle 1", throttleLine, (1, 2))
-        throttleLine = [DataSpec('501', 'timestamp', 'throttle_2')]
-        self.placeNewGraph("Throttle 2", throttleLine, (2, 1, 1, 2))
 
 
 class TuningLayout(ReadoutLayout):

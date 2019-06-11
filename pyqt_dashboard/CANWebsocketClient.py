@@ -28,7 +28,7 @@ def mc_parse_A8(can_id, data, time_pi):
         'iq_fdbk': int(data[10:12], 16),
         'parsed': True,
         'timestamp': time_pi
-        }
+    }
 
 
 def mc_parse_AC(can_id, data, time_pi):

@@ -10,14 +10,15 @@ log_path = os.path.join(start_path, 'logs',
                         start_date_time + '.txt')
 
 # Max resolution (ms) for data frames to be logged
-max_time_diff_ms = 10  
+max_time_diff_ms = 10
 start_time = int(round(time.time() * 1000))
 last_time = start_time
 multi_frame_message = ''
 
+
 # Logs a set of CAN frames in a time interval to a log file
 def log_CAN_data(can_id, message):
-    
+
     current_time = int(round(time.time() * 1000))
 
     global start_time

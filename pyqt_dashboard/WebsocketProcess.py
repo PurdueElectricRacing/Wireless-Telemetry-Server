@@ -27,7 +27,7 @@ class WebsocketProcess(QThread):
         for m_id in data:
             message = data[m_id]
             time = float(message['ts'])
-            
+ 
             self.dataManager.onRawDataCallback(message)
 
             parsed = self.client.parseRawMessage(message, time)
