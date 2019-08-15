@@ -20,6 +20,7 @@ ip = '192.168.10.1'
 port = 5000
 SER_PORT = '/dev/ttyUSB0'
 SER_RATE = 5000000
+ENABLE_WEBSOCKETS = False
 
 if(len(sys.argv)) > 1:
     ip = sys.argv[1]
@@ -78,17 +79,18 @@ async def rec_serial_data(ser_read, ser_write):
 
     while True:
 
-        if not server.can_to_send == "":
-            print("Message to send over CAN: " + server.can_to_send.encode)
-            ser_write.write(server.can_to_send.encode() + b"\r")
-            server.can_to_send = ""
-            await ser_write.drain()
+        # EXPERIMENTAL 
+        # if not server.can_to_send == "":
+        #     print("Message to send over CAN: " + server.can_to_send.encode)
+        #     ser_write.write(server.can_to_send.encode() + b"\r")
+        #     server.can_to_send = ""
+        #     await ser_write.drain()
 
         in_byte = await ser_read.read(1)
         print(in_byte)
 
         if b"\x06" in in_byte:
-            print("ACK")
+            print("CANDapter acknowledged command.")
         elif b"\x07" in in_byte:
             print("CANDApter Error")
         elif b"\r" in in_byte:

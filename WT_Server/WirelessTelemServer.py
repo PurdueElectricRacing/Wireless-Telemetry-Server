@@ -10,6 +10,7 @@ USERS = set()
 
 can_to_send = ""
 
+
 def get_server(ip, port):
     print('Serving websocket server on ' + ip + ':' + str(port) + ' ...')
     return websockets.serve(on_client_connect, ip, port)
@@ -48,7 +49,7 @@ async def send_data(data):
             'ts': int(round(time.time() * 1000))
             }
         payload = json.dumps(message, default=str)
-        print(data)
+
         await asyncio.wait([user.send(payload) for user in USERS])
 
 
