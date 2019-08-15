@@ -42,8 +42,7 @@ multi_frame_message = ''
 
 def close_CANDAPTER(serial_connection):
     close_message = "\rC\r".encode()
-    # print(serial_connection.write(clear_message))   # CAN Baudrate set to 500k
-    print(serial_connection.write(close_message))   # CAN Baudrate set to 500k
+    print(serial_connection.write(close_message))
     serial_connection.flush()
     serial_connection.reset_output_buffer()
     serial_connection.close()
@@ -51,15 +50,15 @@ def close_CANDAPTER(serial_connection):
 
 
 def initalize_CANDAPTER(serial_connection):
-    baudrate = 'S6\r'.encode()
-    timestamp = 'A0\r'.encode()
-    open_message = 'O\r'.encode()
+    baudrate = 'S6\r'.encode()          # CAN Baudrate set to 500k
+    timestamp = 'A0\r'.encode()         # Enable timestamps
+    open_message = 'O\r'.encode()       # Open connection to CANDAPTER
     clear_message = '\r\r\r'.encode()
 
-    serial_connection.write(baudrate)   # CAN Baudrate set to 500k
-    serial_connection.write(timestamp)   # CAN Baudrate set to 500k
-    serial_connection.write(clear_message)   # CAN Baudrate set to 500k
-    serial_connection.write(open_message)   # CAN Baudrate set to 500k
+    serial_connection.write(baudrate)
+    serial_connection.write(timestamp)
+    serial_connection.write(clear_message)
+    serial_connection.write(open_message)
 
     print("Done init CANDapter...")
 
@@ -79,7 +78,7 @@ async def rec_serial_data(ser_read, ser_write):
 
     while True:
 
-        # EXPERIMENTAL 
+        # EXPERIMENTAL
         # if not server.can_to_send == "":
         #     print("Message to send over CAN: " + server.can_to_send.encode)
         #     ser_write.write(server.can_to_send.encode() + b"\r")
@@ -90,8 +89,10 @@ async def rec_serial_data(ser_read, ser_write):
         print(in_byte)
 
         if b"\x06" in in_byte:
+            # CANDapter has recieved our command.
             print("CANDapter acknowledged command.")
         elif b"\x07" in in_byte:
+            # CANDapter error
             print("CANDApter Error")
         elif b"\r" in in_byte:
             # End of CAN frame
@@ -99,14 +100,14 @@ async def rec_serial_data(ser_read, ser_write):
 
             if "t" not in raw_message:
                 # Reset message buffer if invalid message was recieved
-                message_buffer = ""
+                message_buffer = bytes()
                 continue
 
             # Strip initial 't' off of the message
             t_index = raw_message.index("t")
             can_message = raw_message[t_index + 1:]
 
-            m_id = can_message[0:3]  
+            m_id = can_message[0:3]
             stripped_message = can_message[3:]
 
             num_id = None
@@ -117,8 +118,6 @@ async def rec_serial_data(ser_read, ser_write):
             except Exception:
                 continue
 
-            CAN_Logger.log_CAN_data(num_id, m_timestamp)
-
             data = {
                 "i": m_id,
                 "m": stripped_message,
@@ -126,37 +125,48 @@ async def rec_serial_data(ser_read, ser_write):
                 }
             parsed_buffer[int(m_id, 16)] = data
 
+            # Log all data to the logfile. Can be done periodically
+            # by placing this line in the below FOR loop.
+            # ENABLE_WEBSOCKETS must be enabled to do so.
+            CAN_Logger.log_CAN_data(num_id, data)
+
             current_time = time.time()
-            if current_time - last_time >= buffer_time:
+            if ENABLE_WEBSOCKETS and current_time - last_time >= buffer_time:
                 buffer_len = len(parsed_buffer)
                 if buffer_len > 0:
                     last_time = current_time
                     await server.send_data(parsed_buffer)
                     parsed_buffer = {}
 
+            # Clear message buffer once we are done with it.
             message_buffer = bytes()
 
         else:
-            # Part of CAN frame
+            # Part of CAN frame, append to message being recieved
             message_buffer += in_byte
 
 
 async def main(loop):
     serial_reader, serial_writer = await serial_asyncio.open_serial_connection(
-        url=SER_PORT, baudrate=SER_RATE)
+        url=SER_PORT, baudrate=SER_RATE
+        )
 
     ser_task = asyncio.ensure_future(
         rec_serial_data(serial_reader, serial_writer)
         )
 
-    server_task = asyncio.ensure_future(server.get_server(ip, port))
+    server_task = asyncio.ensure_future(
+        server.get_server(ip, port)
+        )
 
     done, pending = await asyncio.wait(
         [ser_task, server_task],
         return_when=asyncio.ALL_COMPLETED
-    )
+        )
+
 
 ser = serial.Serial(SER_PORT, SER_RATE)
+# Close candapter at start to avoid any loose messages in the queue.
 close_CANDAPTER(ser)
 
 loop = asyncio.get_event_loop()
