@@ -68,7 +68,6 @@ async def rec_serial_data(ser_read, ser_write):
     current_time = time.time()
     last_time = current_time
     buffer_time = 1/100
-    # buffer_time = 0
 
     parsed_buffer = {}
     message_buffer = bytes()
