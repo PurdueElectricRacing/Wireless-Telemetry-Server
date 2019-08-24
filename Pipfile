@@ -8,6 +8,8 @@ verify_ssl = true
 [packages]
 websockets = "*"
 pandas = "*"
+mysql-connector = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7.4"
