@@ -1,3 +1,5 @@
+services:
+  - mysql
 language: python
 python:
   - "3.7.4"
@@ -5,3 +7,4 @@ install:
   - pip install pycodestyle
 script:
   - pycodestyle .
+  - pytest
