@@ -1,6 +1,7 @@
 import mysql.connector
 
-class DatabaseTest:
+
+class TestDatabase:
 
     # Ensure the connection can be made to the database
     def test_connection(self):
@@ -9,3 +10,5 @@ class DatabaseTest:
             user="root",
             password=""
             )
+
+        mydb.close()
