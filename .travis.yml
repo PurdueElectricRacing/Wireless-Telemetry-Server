@@ -4,7 +4,8 @@ language: python
 python:
   - "3.7.4"
 install:
-  - pip install pycodestyle
+  - pip install pipenv
+  - pipenv install --dev
 script:
   - pycodestyle .
   - pytest
