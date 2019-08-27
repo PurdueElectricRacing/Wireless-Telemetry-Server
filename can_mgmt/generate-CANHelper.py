@@ -93,11 +93,13 @@ if __name__ == '__main__':
         all_function_headers.append(function_header)
 
         id_string = common_name.rstrip("_").upper()
-        function_body = "\tCanTxMsgTypeDef tx;\
-                        \r\ttx.IDE = CAN_ID_STD;\
-                        \r\ttx.RTR = CAN_RTR_DATA;\
-                        \r\ttx.StdId = {};\
-                        \r\ttx.DLC = 1;\n\n".format(id_string + "_CAN_ID")
+        function_body = "\n\t".join(["\tCanTxMsgTypeDef tx;",
+                        "tx.IDE = CAN_ID_STD;",
+                        "tx.RTR = CAN_RTR_DATA;",
+                        "tx.StdId = {};",
+                        "tx.DLC = 1;\n\n"]
+            ).format(id_string + "_CAN_ID")
+
         byte_num = 0
         for i, param in enumerate(params):
             data_size = bits[i][0] - bits[i][1] + 1

@@ -1,5 +1,5 @@
 /* 
-* Generated on 2019-08-27 14:44:41.156965
+* Generated on 2019-08-27 14:48:30.371345
 * This file creates a list of functions used to send
 * CAN messages with abstracted IDs and messages.
 */
@@ -10,7 +10,11 @@
  // GENERATED FUCTION
 void sendWheelSpeedFront(int16_t wheelSpeedFrontL, int16_t wheelSpeedFrontR)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = WHEEL_SPEED_FRONT_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = WHEEL_SPEED_FRONT_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = wheelSpeedFrontL & 0xFF;
 	tx.Data[1] = wheelSpeedFrontL >> 8;
@@ -24,7 +28,11 @@ void sendWheelSpeedFront(int16_t wheelSpeedFrontL, int16_t wheelSpeedFrontR)
  // GENERATED FUCTION
 void sendWheelSpeedRear(int16_t wheelSpeedRearL, int16_t wheelSpeedRearR)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = WHEEL_SPEED_REAR_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = WHEEL_SPEED_REAR_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = wheelSpeedRearL & 0xFF;
 	tx.Data[1] = wheelSpeedRearL >> 8;
@@ -38,7 +46,11 @@ void sendWheelSpeedRear(int16_t wheelSpeedRearL, int16_t wheelSpeedRearR)
  // GENERATED FUCTION
 void sendTireTempFront(int16_t tireTempFrontR, int16_t tireTempFrontL)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = TIRE_TEMP_FRONT_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = TIRE_TEMP_FRONT_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = tireTempFrontR & 0xFF;
 	tx.Data[1] = tireTempFrontR >> 8;
@@ -52,7 +64,11 @@ void sendTireTempFront(int16_t tireTempFrontR, int16_t tireTempFrontL)
  // GENERATED FUCTION
 void sendTireTempRear(int16_t tireTempRearR, int16_t tireTempRearL)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = TIRE_TEMP_REAR_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = TIRE_TEMP_REAR_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = tireTempRearR & 0xFF;
 	tx.Data[1] = tireTempRearR >> 8;
@@ -66,7 +82,11 @@ void sendTireTempRear(int16_t tireTempRearR, int16_t tireTempRearL)
  // GENERATED FUCTION
 void sendCoolant(int16_t coolantMotor, int16_t coolantFlow, int16_t coolantRad, int16_t coolantMc)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = COOLANT_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = COOLANT_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = coolantMotor & 0xFF;
 	tx.Data[1] = coolantMotor >> 8;
@@ -86,7 +106,11 @@ void sendCoolant(int16_t coolantMotor, int16_t coolantFlow, int16_t coolantRad, 
  // GENERATED FUCTION
 void sendShockPotFront(int16_t shockPotFrontL, int16_t shockPotFrontR)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = SHOCK_POT_FRONT_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = SHOCK_POT_FRONT_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = shockPotFrontL & 0xFF;
 	tx.Data[1] = shockPotFrontL >> 8;
@@ -100,7 +124,11 @@ void sendShockPotFront(int16_t shockPotFrontL, int16_t shockPotFrontR)
  // GENERATED FUCTION
 void sendShockPotRear(int16_t shockPotRearR, int16_t shockPotRearL)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = SHOCK_POT_REAR_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = SHOCK_POT_REAR_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = shockPotRearR & 0xFF;
 	tx.Data[1] = shockPotRearR >> 8;
@@ -114,7 +142,11 @@ void sendShockPotRear(int16_t shockPotRearR, int16_t shockPotRearL)
  // GENERATED FUCTION
 void sendDropLink(int16_t dropLinkLeft, int16_t dropLinkRight)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = DROP_LINK_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = DROP_LINK_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = dropLinkLeft & 0xFF;
 	tx.Data[1] = dropLinkLeft >> 8;
@@ -128,7 +160,11 @@ void sendDropLink(int16_t dropLinkLeft, int16_t dropLinkRight)
  // GENERATED FUCTION
 void sendLcaFront(int16_t lcaFrontLb, int16_t lcaFrontRf, int16_t lcaFrontLf, int16_t lcaFrontRb)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = LCA_FRONT_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = LCA_FRONT_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = lcaFrontLb & 0xFF;
 	tx.Data[1] = lcaFrontLb >> 8;
@@ -148,7 +184,11 @@ void sendLcaFront(int16_t lcaFrontLb, int16_t lcaFrontRf, int16_t lcaFrontLf, in
  // GENERATED FUCTION
 void sendLcaRear(int16_t lcaRearLf, int16_t lcaRearRf, int16_t lcaRearLb, int16_t lcaRearRb)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = LCA_REAR_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = LCA_REAR_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = lcaRearLf & 0xFF;
 	tx.Data[1] = lcaRearLf >> 8;
@@ -168,7 +208,11 @@ void sendLcaRear(int16_t lcaRearLf, int16_t lcaRearRf, int16_t lcaRearLb, int16_
  // GENERATED FUCTION
 void sendUcaFront(int16_t ucaFrontRb, int16_t ucaFrontLb, int16_t ucaFrontRf, int16_t ucaFrontLf)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = UCA_FRONT_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = UCA_FRONT_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = ucaFrontRb & 0xFF;
 	tx.Data[1] = ucaFrontRb >> 8;
@@ -188,7 +232,11 @@ void sendUcaFront(int16_t ucaFrontRb, int16_t ucaFrontLb, int16_t ucaFrontRf, in
  // GENERATED FUCTION
 void sendUcaRear(int16_t ucaRearLf, int16_t ucaRearRb, int16_t ucaRearLb, int16_t ucaRearRf)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = UCA_REAR_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = UCA_REAR_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = ucaRearLf & 0xFF;
 	tx.Data[1] = ucaRearLf >> 8;
@@ -208,7 +256,11 @@ void sendUcaRear(int16_t ucaRearLf, int16_t ucaRearRb, int16_t ucaRearLb, int16_
  // GENERATED FUCTION
 void sendFrontTorsionalArb(int16_t frontTorsionalArb)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = FRONT_TORSIONAL_ARB_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = FRONT_TORSIONAL_ARB_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = frontTorsionalArb & 0xFF;
 	tx.Data[1] = frontTorsionalArb >> 8;
@@ -219,7 +271,11 @@ void sendFrontTorsionalArb(int16_t frontTorsionalArb)
  // GENERATED FUCTION
 void sendRearTorsionalArb(int16_t rearTorsionalArb)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = REAR_TORSIONAL_ARB_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = REAR_TORSIONAL_ARB_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = rearTorsionalArb & 0xFF;
 	tx.Data[1] = rearTorsionalArb >> 8;
@@ -230,7 +286,11 @@ void sendRearTorsionalArb(int16_t rearTorsionalArb)
  // GENERATED FUCTION
 void sendSteering(int16_t steeringTorsion, int16_t steeringAngle)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = STEERING_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = STEERING_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = steeringTorsion & 0xFF;
 	tx.Data[1] = steeringTorsion >> 8;
@@ -244,7 +304,11 @@ void sendSteering(int16_t steeringTorsion, int16_t steeringAngle)
  // GENERATED FUCTION
 void sendImu(int8_t imuType, int16_t imuData, int32_t imuTime)
 {
-	CanTxMsgTypeDef tx;                        	tx.IDE = CAN_ID_STD;                        	tx.RTR = CAN_RTR_DATA;                        	tx.StdId = IMU_CAN_ID;                        	tx.DLC = 1;
+	CanTxMsgTypeDef tx;
+	tx.IDE = CAN_ID_STD;
+	tx.RTR = CAN_RTR_DATA;
+	tx.StdId = IMU_CAN_ID;
+	tx.DLC = 1;
 
 	tx.Data[0] = imuType & 0xFF;
 
