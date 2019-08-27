@@ -1,7 +1,7 @@
 import csv
 
 
-# Import sensor data from CSF file. This file contains information
+# Import sensor data from CSV file. This file contains information
 # about each individual sensor on the car as well as its can ID
 # and data offset used to parse the specific sensor's data
 class CANParser():
