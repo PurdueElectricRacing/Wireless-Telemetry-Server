@@ -3,9 +3,10 @@ from SensorDict import CANParser
 from collections import Counter 
 import datetime as dt
 
-
 parser = CANParser()
 
+OUTPUT_SOURCE_FILE = "CANHelper.c"
+OUTPUT_HEADER_FILE = "CANHelper.h"
 
 # Given a list of names, find the common values across all of them
 # Example:
@@ -43,7 +44,7 @@ def get_c_int_datatype(bits):
     elif bits == 16:
         return 'int16_t'
     elif bits == 24:
-        return 'int24_t'
+        return 'int32_t'
     elif bits == 32:
         return 'int32_t'
     elif bits == 1:
@@ -60,18 +61,20 @@ if __name__ == '__main__':
     # away from the programmer.
 
     # INTENDED C CODE TO SEND MESSAGES:
-    # canHelper.sendRearWheelSpeed(speed_l, speed_r);
-    file_output = ""
+    # sendRearWheelSpeed(speed_l, speed_r);
+    source_file_source = ""
     all_function_headers = []
 
-    file_output = """/* Generated on {}
+    # GENERATE SOURCE FILE
+    source_file_source = """/* 
+* Generated on {}
 * This file creates a list of functions used to send
 * CAN messages with abstracted IDs and messages.
-*
 */
 
-#ifndef CANHelper_C
-#define CANHelper_C""".format(str(dt.datetime.now()))
+#include "CANHelper.h"
+
+""".format(str(dt.datetime.now()))
 
     for dec_id, sensors in parser.sensorLib.items():
         sensor_names = [name for name in sensors]
@@ -90,10 +93,10 @@ if __name__ == '__main__':
         all_function_headers.append(function_header)
 
         id_string = common_name.rstrip("_").upper()
-        function_body = "\tCanTxMsgTypeDef tx;\n\
-                        \r\ttx.IDE = CAN_ID_STD;\n\
-                        \r\ttx.RTR = CAN_RTR_DATA;\n\
-                        \r\ttx.StdId = {};\n\
+        function_body = "\tCanTxMsgTypeDef tx;\
+                        \r\ttx.IDE = CAN_ID_STD;\
+                        \r\ttx.RTR = CAN_RTR_DATA;\
+                        \r\ttx.StdId = {};\
                         \r\ttx.DLC = 1;\n\n".format(id_string + "_CAN_ID")
         byte_num = 0
         for i, param in enumerate(params):
@@ -106,13 +109,35 @@ if __name__ == '__main__':
             
             function_body += data_line + "\n"
 
-        file_output += "\n" + function_header + "\n"
-        file_output += "{\n"
-        file_output += function_body
-        file_output += "\txQueueSendToBack(car.q_tx_dcan, &tx, 100);\n"
-        file_output += "}\n"
+        source_file_source += "\n // GENERATED FUCTION\n"
+        source_file_source += function_header + "\n"
+        source_file_source += "{\n"
+        source_file_source += function_body
+        source_file_source += "\txQueueSendToBack(car.q_tx_dcan, &tx, 100);\n"
+        source_file_source += "}\n"
 
-    file_output += "#endif"
+    save_file = open(OUTPUT_SOURCE_FILE, "w+")
+    save_file.write(source_file_source)
+    save_file.close()
 
-    print(file_output)
-    print(";\n".join(all_function_headers)+";")
+    # GENERATE HEADER FILE
+    header_file_source = """/* 
+* Generated on {}
+* This file creates a list of functions used to send
+* CAN messages with abstracted IDs and messages.
+*
+*/
+
+#include "CANProcess.h"
+#include "CANID.h"
+
+#ifndef CANHelper_H
+#define CANHelper_H\n\n""".format(str(dt.datetime.now()))
+
+    header_file_source += (";\n".join(all_function_headers)+";")
+
+    header_file_source +="\n\n#endif"
+
+    save_file = open(OUTPUT_HEADER_FILE, "w+")
+    save_file.write(header_file_source)
+    save_file.close()
