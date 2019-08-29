@@ -3,6 +3,11 @@ services:
 language: python
 python:
   - "3.7.4"
+env:
+  global:
+    - DATABASE_HOST="localhost"
+    - DATABASE_USER="root"
+    - DATABASE_PASSWORD=""
 install:
   - pip install pipenv
   - pipenv install --dev
