@@ -1,14 +1,19 @@
+import sys
+import os
+import pytest
 import mysql.connector
+import pathmagic  # noqa
+from database import Database
+
+
+db = Database()
 
 
 class TestDatabase:
 
     # Ensure the connection can be made to the database
     def test_connection(self):
-        mydb = mysql.connector.connect(
-            host="127.0.0.1",
-            user="root",
-            password=""
-            )
+        db.connect()
 
-        mydb.close()
+    def test_cursor(self):
+        db.get_cursor()
