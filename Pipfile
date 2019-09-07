@@ -11,6 +11,8 @@ websockets = "*"
 pandas = "*"
 mysql-connector = "*"
 requests = "*"
+pytest = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.7.4"
