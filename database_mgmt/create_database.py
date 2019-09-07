@@ -12,12 +12,10 @@ cursor.execute('USE sensors')
 current_id = '#####'
 for index, row in sensor_dict.iterrows():
     if row['id'][3] == current_id[3]:
-        add_query = 'ALTER TABLE {} ADD COLUMN {} INT(16) NULL'.format(current_id[1:4], row['name'])
-        cursor.execute(add_query)
+        db.add_column(current_id[1:4], row['name'], 'INT(16) NULL')
     else:
         current_id = row['id']
-        table_name = current_id[1:4] # Tables can't start with a 0x (no starting integer), so start with x instead
-        create_query = 'CREATE TABLE {} (timestamp DATETIME(3) NOT NULL)'.format(table_name)
-        alter_query = 'ALTER TABLE {} ADD COLUMN {} INT(16) NULL'.format(table_name, row['name'])
-        cursor.execute(create_query)
-        cursor.execute(alter_query)
+        # Tables can't start with a 0x (no starting integer), so start with x
+        table_name = current_id[1:4]
+        db.create_table(table_name)
+        db.add_column(table_name, row['name'], 'INT(16) NULL')
