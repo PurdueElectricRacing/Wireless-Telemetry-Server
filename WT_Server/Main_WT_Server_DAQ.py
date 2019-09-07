@@ -22,17 +22,24 @@ SER_PORT = '/dev/ttyUSB0'
 SER_RATE = 5000000
 ENABLE_WEBSOCKETS = False
 
+ID_FILTER = [
+    '0A0', # MC Temp 1
+    '0A1', # MC Temp 2
+    '0A2', # MC Temp 3
+    '0A6', # MC Current
+    '0A7', # MC Voltage
+    '0A8', # MC Flux
+    '0AC', # MC Torque
+    '700', # Wheel Speed
+    '701', # Wheel Speed
+    '421', # Accel
+    '720', # Coolant 
+    '721', # Coolant Flow
+    '6B1' # SOC Data
+]
+
 if(len(sys.argv)) > 1:
     ip = sys.argv[1]
-
-start_date_time = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-
-start_path = os.path.abspath(os.path.dirname(__file__))
-log_path = os.path.join(start_path, 'logs',
-                        start_date_time + '.txt')
-
-with open(log_path, 'a+') as logfile:
-    logfile.write(start_date_time)
 
 # Max resolution (ms) for data frames to be logged
 start_time = int(round(time.time() * 1000))
@@ -75,6 +82,8 @@ async def rec_serial_data(ser_read, ser_write):
     initalize_CANDAPTER(ser_write)
     time.sleep(1)
 
+    START_LOGGING = True
+
     while True:
 
         # EXPERIMENTAL
@@ -85,8 +94,6 @@ async def rec_serial_data(ser_read, ser_write):
         #     await ser_write.drain()
 
         in_byte = await ser_read.read(1)
-        print(in_byte)
-
         if b"\x06" in in_byte:
             # CANDapter has recieved our command.
             print("CANDapter acknowledged command.")
@@ -96,49 +103,54 @@ async def rec_serial_data(ser_read, ser_write):
         elif b"\r" in in_byte:
             # End of CAN frame
             raw_message = message_buffer.decode().strip().replace("\r", "")
-
+            message_buffer = bytes()
             if "t" not in raw_message:
                 # Reset message buffer if invalid message was recieved
-                message_buffer = bytes()
                 continue
-
+            
             # Strip initial 't' off of the message
             t_index = raw_message.index("t")
+
             can_message = raw_message[t_index + 1:]
 
             m_id = can_message[0:3]
-            stripped_message = can_message[3:]
+            if not START_LOGGING:
+                if '350' in m_id:
+                    START_LOGGING = True
+                    print("Start button pressed! Logging data...\n")
+                    CAN_Logger.create_logfile()
+            else:
+                if m_id in ID_FILTER:
+                    stripped_message = can_message[4:]
+                    CAN_Logger.log_CAN_data(m_id, stripped_message)
+            
+            
 
-            num_id = None
-            m_timestamp = int(round(time.time() * 1000))
 
-            try:
-                num_id = int(m_id, 16)
-            except Exception:
-                continue
+            # m_timestamp = int(round(time.time() * 1000))
 
-            data = {
-                "i": m_id,
-                "m": stripped_message,
-                "ts": m_timestamp
-                }
-            parsed_buffer[int(m_id, 16)] = data
+            # data = {
+            #     "i": m_id,
+            #     "m": stripped_message,
+            #     "ts": m_timestamp
+            #     }
+            # parsed_buffer[num_id] = data
 
             # Log all data to the logfile. Can be done periodically
             # by placing this line in the below FOR loop.
             # ENABLE_WEBSOCKETS must be enabled to do so.
-            CAN_Logger.log_CAN_data(num_id, data)
+            
 
-            current_time = time.time()
-            if ENABLE_WEBSOCKETS and current_time - last_time >= buffer_time:
-                buffer_len = len(parsed_buffer)
-                if buffer_len > 0:
-                    last_time = current_time
-                    await server.send_data(parsed_buffer)
-                    parsed_buffer = {}
+            # current_time = time.time()
+            # if ENABLE_WEBSOCKETS and current_time - last_time >= buffer_time:
+            #     buffer_len = len(parsed_buffer)
+            #     if buffer_len > 0:
+            #         last_time = current_time
+            #         await server.send_data(parsed_buffer)
+            #         parsed_buffer = {}
 
             # Clear message buffer once we are done with it.
-            message_buffer = bytes()
+            
 
         else:
             # Part of CAN frame, append to message being recieved
@@ -154,14 +166,19 @@ async def main(loop):
         rec_serial_data(serial_reader, serial_writer)
         )
 
-    server_task = asyncio.ensure_future(
-        server.get_server(ip, port)
-        )
-
-    done, pending = await asyncio.wait(
-        [ser_task, server_task],
-        return_when=asyncio.ALL_COMPLETED
-        )
+    if ENABLE_WEBSOCKETS:
+        server_task = asyncio.ensure_future(
+            server.get_server(ip, port)
+            )
+        done, pending = await asyncio.wait(
+            [ser_task, server_task],
+            return_when=asyncio.ALL_COMPLETED
+            )
+    else:
+        done, pending = await asyncio.wait(
+            [ser_task],
+            return_when=asyncio.ALL_COMPLETED
+            )
 
 
 ser = serial.Serial(SER_PORT, SER_RATE)
