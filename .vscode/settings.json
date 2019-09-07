@@ -3,5 +3,4 @@
     "python.linting.pep8Enabled": true,
     "python.linting.enabled": false,
     "python.linting.pep8Path": "pycodestyle",
-    "python.pythonPath": "C:\\Users\\Jack LeCroy\\.conda\\envs\\pipenv-test\\python.exe"
 }

@@ -3,8 +3,8 @@ import pandas as pd
 import datetime as dt
 
 SPREADSHEET_FILE_ID = "195Y2cf9C2mrA6QCLuLJv3NHsCqTLi-3Wd07q4T5rXuM"
-OUTPUT_CSV_FILE = "SensorDict.csv"
-OUTPUT_HEADER_FILE = "CANID.h"
+OUTPUT_CSV_FILE = "can_mgmt/SensorDict.csv"
+OUTPUT_HEADER_FILE = "can_mgmt/CANID.h"
 # Rows before the header are skipped.
 # The row after the header will also be skipped because it is an example row.
 HEADER_ROW = 5
@@ -52,10 +52,13 @@ for index, row in content_df.iterrows():
             flags_list = item.split("\n")
             for flag_i, flag in enumerate(flags_list):
                 flag_paren_start = flag.find("(")
-                flag_bit = str(int(flag[flag_paren_start + 1]) +
-                               8 * int(column[4]))
+                try:
+                    flag_bit = str(int(flag[flag_paren_start + 1]) +
+                                   8 * int(column[4]))
+                except:
+                    continue
                 flag = flag[0:flag_paren_start - 1]
-                flags_df = flags_df.append({"id": index, "MSB": flag_bit,
+                flags_df = flags_df.append({"id": index.lower(), "MSB": flag_bit,
                                            "LSB": flag_bit, "name": flag},
                                            ignore_index=True)
             continue
@@ -108,7 +111,10 @@ for index, row in output_df.iterrows():
                                                       row["LSB"]))
         last_ID = ID
         continue
-    last_underscore = sensor_name_and_type.rindex("_")
+    try:
+        last_underscore = sensor_name_and_type.rindex("_")
+    except:
+        continue
     sensor_name = sensor_name_and_type[0:last_underscore]
     if last_ID != ID:
         savefile_h.write("\n#define {}_CAN_ID {}\n".format(sensor_name, ID))
