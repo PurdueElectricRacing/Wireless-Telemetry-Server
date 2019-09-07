@@ -5,17 +5,16 @@ load_dotenv()
 
 
 class Database:
-    def __init__(self):
-        self.host = os.getenv('DATABASE_HOST')
-        self.user = os.getenv('DATABASE_USER')
-        self.password = os.getenv('DATABASE_PASSWORD')
-        self._connection = None
+    _host = os.getenv('DATABASE_HOST')
+    _user = os.getenv('DATABASE_USER')
+    _password = os.getenv('DATABASE_PASSWORD')
+    _connection = None
 
     def connect(self):
         db = mysql.connector.connect(
-            host=self.host,
-            user=self.user,
-            password=self.password
+            host=self._host,
+            user=self._user,
+            password=self._password
         )
 
         # Set a connection so that a new connection doesn't

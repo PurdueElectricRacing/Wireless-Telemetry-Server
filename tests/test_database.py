@@ -24,5 +24,3 @@ class TestDatabase:
         cursor.execute('use sensors')
         test = cursor.execute('describe x70')
         print(test)
-
-TestDatabase().test_creation()
