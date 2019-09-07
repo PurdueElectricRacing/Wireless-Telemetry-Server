@@ -1,39 +1,12 @@
-import csv
-
+import time
 
 # Import sensor data from CSF file. This file contains information
 # about each individual sensor on the car as well as its can ID
 # and data offset used to parse the specific sensor's data
 class CANParser():
     def __init__(self):
-        self.sensorLib = self.create_lib()
+        database = Database()
 
-        self.saveFile = csv.DictWriter(open('SensorData.csv', "a"),
-                                       fieldnames=["timestamp", "id", "data"],
-                                       extrasaction="ignore")
-
-    # Parses CSV file of individual sensors to a dict that is easily
-    # navigitable for parsing incoming data.
-    # list format:
-    # id : {'name1' : [msb, lsb], 'name2' : [msb, lsb], ...}
-    def create_lib(self):
-        sensorLibraryFile = csv.reader(open('SensorDict.csv'))
-        sensorIdList = {}
-
-        for row in sensorLibraryFile:
-            if not row or row[0] == 'id':
-                continue
-
-            canID = int(row[0], 16)
-            msb = int(row[1])
-            lsb = int(row[2])
-            friendlyName = row[3].strip()
-
-            if canID not in sensorIdList:
-                sensorIdList[canID] = {}
-            sensorIdList[canID][friendlyName] = [msb, lsb]
-
-        return sensorIdList
 
     # Takes in a single data point with the format:
     # {"timestamp" : "XXX", "id" : "XXX", "data" : "XXXX"}

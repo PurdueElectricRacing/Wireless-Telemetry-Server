@@ -1,4 +1,4 @@
-/* Generated on 2019-09-07 11:43:50.028192
+/* Generated on 2019-09-07 14:44:25.169641
 * This file contains all of the constants that are
 * being used on the CAN bus.
 *
@@ -9,6 +9,16 @@
 
 #ifndef CANID_H
 #define CANID_H
+#define RAW_THROTTLE_CAN_ID 0x500
+#define RAW_THROTTLE_ONE_START_BIT 0
+#define RAW_THROTTLE_ONE_END_BIT 7
+#define RAW_THROTTLE_TWO_START_BIT 8
+#define RAW_THROTTLE_TWO_END_BIT 15
+#define BRAKE_VALUE_ONE_START_BIT 16
+#define BRAKE_VALUE_ONE_END_BIT 23
+#define BRAKE_VALUE_TWO_START_BIT 24
+#define BRAKE_VALUE_TWO_END_BIT 31
+
 #define WHEEL_SPEED_FRONT_CAN_ID 0x700
 #define WHEEL_SPEED_FRONT_L_START_BIT 0
 #define WHEEL_SPEED_FRONT_L_END_BIT 31
@@ -137,19 +147,17 @@
 #define STEERING_ANGLE_START_BIT 16
 #define STEERING_ANGLE_END_BIT 31
 
-#define X_CAN_ID 0x7d0
-#define X_AXIS [15:8]_START_BIT 8
-#define X_AXIS [15:8]_END_BIT 15
-#define X_AXIS [7:0]_START_BIT 16
-#define X_AXIS [7:0]_END_BIT 23
-#define Y_AXIS [15:8] _START_BIT 24
-#define Y_AXIS [15:8] _END_BIT 31
-#define Y_AXIS [7:0]_START_BIT 32
-#define Y_AXIS [7:0]_END_BIT 39
-#define Z_AXIS [15:8] _START_BIT 40
-#define Z_AXIS [15:8] _END_BIT 47
-#define Z_AXIS [7:0] _START_BIT 48
-#define Z_AXIS [7:0] _END_BIT 55
+#define IMU_TYPE_CAN_ID 0x7d0
+#define IMU_TYPE_AXIS_START_BIT 0
+#define IMU_TYPE_AXIS_END_BIT 7
+#define IMU_X_AXIS_START_BIT 8
+#define IMU_X_AXIS_END_BIT 23
+#define IMU_Y_AXIS_START_BIT 24
+#define IMU_Y_AXIS_END_BIT 39
+#define IMU_Z_AXIS_START_BIT 40
+#define IMU_Z_AXIS_END_BIT 55
+#define IMU_RESOLUTION_START_BIT 56
+#define IMU_RESOLUTION_END_BIT 63
 
 #define L_WHEEL_SPD_CAN_ID 0x7f0
 #define L_WHEEL_SPD_ERROR_START_BIT 0

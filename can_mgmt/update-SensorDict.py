@@ -52,13 +52,10 @@ for index, row in content_df.iterrows():
             flags_list = item.split("\n")
             for flag_i, flag in enumerate(flags_list):
                 flag_paren_start = flag.find("(")
-                try:
-                    flag_bit = str(int(flag[flag_paren_start + 1]) +
+                flag_bit = str(int(flag[flag_paren_start + 1]) +
                                    8 * int(column[4]))
-                except:
-                    continue
                 flag = flag[0:flag_paren_start - 1]
-                flags_df = flags_df.append({"id": index.lower(), "MSB": flag_bit,
+                flags_df = flags_df.append({"id": index.upper(), "MSB": flag_bit,
                                            "LSB": flag_bit, "name": flag},
                                            ignore_index=True)
             continue
@@ -111,10 +108,7 @@ for index, row in output_df.iterrows():
                                                       row["LSB"]))
         last_ID = ID
         continue
-    try:
-        last_underscore = sensor_name_and_type.rindex("_")
-    except:
-        continue
+    last_underscore = sensor_name_and_type.rindex("_")
     sensor_name = sensor_name_and_type[0:last_underscore]
     if last_ID != ID:
         savefile_h.write("\n#define {}_CAN_ID {}\n".format(sensor_name, ID))
