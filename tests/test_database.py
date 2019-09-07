@@ -17,3 +17,12 @@ class TestDatabase:
 
     def test_cursor(self):
         db.get_cursor()
+
+    def test_creation(self):
+        import create_database
+        cursor = db.get_cursor()
+        cursor.execute('use sensors')
+        test = cursor.execute('describe x70')
+        print(test)
+
+TestDatabase().test_creation()
