@@ -1,6 +1,7 @@
 import WirelessTelemServer as server
 import asyncio
 import random
+import time
 
 # This file simulates the job of the DAQ code.
 # A server is setup and broadcast on ip:port
@@ -8,6 +9,14 @@ import random
 
 ip = '127.0.0.1'
 port = 5000
+
+possible_data = [
+    {
+        'i': '501',
+        'm': '0F900EBF02A0029F',
+        'ts': None
+    },
+]
 
 
 possible_data = [
@@ -47,12 +56,13 @@ async def send_data():
         await asyncio.sleep(0.01)
         index = int(random.random() * len(possible_data))
         data = possible_data[index]
-        await server.send_data(data)
+        data['ts'] = int(time.time()*1000)
+        await server.send_data([data])
 
 
 async def run_server(ip, port):
     wait_task = asyncio.ensure_future(send_data())
-    server_task = asyncio.ensure_future(server.get_server('127.0.0.1', 5000))
+    server_task = asyncio.ensure_future(server.get_server(ip, port))
 
     done, pending = await asyncio.wait(
         [wait_task, server_task],

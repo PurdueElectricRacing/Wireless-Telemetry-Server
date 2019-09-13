@@ -2,10 +2,13 @@ import asyncio
 import websockets
 from datetime import datetime
 import datetime
+import time
 import json
 
 # Contains list of all connected users
 USERS = set()
+
+can_to_send = ""
 
 
 def get_server(ip, port):
@@ -21,8 +24,8 @@ async def on_client_connect(websocket, path):
     print('Connected to client at ' + connection_addr +
           ' on ' + str(datetime.datetime.now()))
 
-    await websocket.send(json.dumps({'type': 'connected', 'payload': 'true',
-                                     'timestamp': str(datetime.datetime.now())
+    await websocket.send(json.dumps({'t': 'c', 'p': 't',
+                                     'ts': int(round(time.time() * 1000))
                                      }))
     global USERS
     try:
@@ -40,9 +43,12 @@ async def on_client_connect(websocket, path):
 async def send_data(data):
     global USERS
     if USERS:
-        payload = json.dumps({'type': 'data', 'payload': data,
-                              'timestamp': str(datetime.datetime.now()},
-                              default=str))
+        message = {
+            't': 'd',
+            'p': data,
+            'ts': int(round(time.time() * 1000))
+            }
+        payload = json.dumps(message, default=str)
 
         await asyncio.wait([user.send(payload) for user in USERS])
 
@@ -52,6 +58,10 @@ async def recieve_data_loop(websocket):
     while websocket.open:
         try:
             message = await websocket.recv()
+
+            global can_to_send
+            can_to_send = message
+
             print('Message from client: ' + str(message))
         except Exception:
             print('Client disconnected!')

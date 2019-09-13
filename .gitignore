@@ -1,5 +1,14 @@
 */__pycache__
+__pycache__
+.vscode/*
+.vscode
 */.idea
+.idea
 *.pyc
+<<<<<<< HEAD
 /logs
 
+=======
+*/logs
+logs
+>>>>>>> feature_add_data_vis
