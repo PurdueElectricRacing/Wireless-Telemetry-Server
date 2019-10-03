@@ -1,0 +1,1 @@
+ssh pi@192.168.4.1 rm -rf /home/pi/WT_Server/logs/*.txt

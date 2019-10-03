@@ -1,0 +1,1 @@
+pscp -pw "PER2018!" -r pi@192.168.4.1:/home/pi/WT_Server/logs ./
