@@ -29,7 +29,8 @@ ID_FILTER = [
     '421', # Accel
     '720', # Coolant 
     '721', # Coolant Flow
-    '6B1' # SOC Data
+    '6B1', # SOC Data
+    '0C0'  # Main Torque command
 ]
 
 
@@ -44,7 +45,7 @@ def close_CANDAPTER(serial_connection):
 
 def initalize_CANDAPTER(serial_connection):
     baudrate = 'S6\r'.encode()          # CAN Baudrate set to 500k
-    timestamp = 'A0\r'.encode()         # Enable timestamps
+    timestamp = 'A0\r'.encode()         # Disable timestamps
     open_message = 'O\r'.encode()       # Open connection to CANDAPTER
     clear_message = '\r\r\r'.encode()
 
@@ -72,6 +73,7 @@ def start_data_collection(ser_port):
 
         # Messages are deliniaed with a \r char. The last message might not be complete so it
         # must be carrried over to the next iteration
+
         finished_messages = []
         if '\r' in message_buffer:
             temp = message_buffer.split("\r")
@@ -97,11 +99,11 @@ def start_data_collection(ser_port):
             m_id = can_message[0:3]
 
             if not START_LOGGING:
-                if '350' in m_id:
-                    START_LOGGING = True
-                    print("[INFO] Start button pressed! Creating logfile...")
-                    CAN_Logger.create_logfile()
-                    print("[INFO] Now logging data...")
+                # if '350' in m_id:
+                START_LOGGING = True
+                print("[INFO] Creating logfile...")
+                CAN_Logger.create_logfile()
+                print("[INFO] Now logging data...")
 
             else:
                 if m_id in ID_FILTER:
